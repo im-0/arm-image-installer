@@ -1,2 +1,1 @@
-# No U-Boot for the trimslice
-echo "= U-Boot is included on the Trimslice, none will be written."
+generic

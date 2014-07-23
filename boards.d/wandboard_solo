@@ -1,3 +1,1 @@
-# write uboot
-echo "= Writing u-boot.imx ...."
-sudo dd if=/tmp/root/usr/share/uboot/$TARGET/u-boot.imx of=$MEDIA bs=1k seek=1 conv=fsync; sync
+wandboard_quad
