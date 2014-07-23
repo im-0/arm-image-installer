@@ -107,13 +107,6 @@ echo "= Creating partition."
 sudo parted -s $MEDIA mklabel msdos &> /dev/null
 sudo parted -s -a optimal $MEDIA mkpart primary ext4 1 512 &> /dev/null
 
-# check to make sure paritioning completed successfully
-#if [[ $? != '0' ]] ; then 
-#	echo ""
-#	echo usage
-#	exit 1
-#fi
-
 # re-read table
 sudo partprobe $MEDIA
 
@@ -139,10 +132,8 @@ sudo mount $PART1 /tmp/install-card
 
 # download files to temp dir
 # get the latest uboot
-#UBOOT=`koji latest-build f21 uboot-tools | awk '{print $1}' | grep uboot`
 pushd /tmp/root &> /dev/null
 koji download-build --arch=armv7hl --latestfrom=f21 uboot-tools
-#wget http://192.168.0.80/linux/development/rawhide/armhfp/os/u/uboot-images-armv7*
 
 # unpack uboot
 rpm2cpio uboot-images*.rpm | cpio -idv &> /dev/null
@@ -158,7 +149,6 @@ else
 fi
 # get pxe images and dtb files
 pushd /tmp/install-card &> /dev/null
-#sudo lftp http://192.168.0.80/linux/development/rawhide/armhfp/os/images/pxeboot/ <<<'glob get *; quit'
 sudo wget $URL/images/pxeboot/vmlinuz
 sudo wget $URL/images/pxeboot/initrd.img
 popd &> /dev/null

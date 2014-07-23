@@ -15,7 +15,7 @@ needed to write U-Boot for the target board.
 
 Usage: fedora-arm-image-installer.sh <options>
 
-   --image=IMAGE    - raw image file name
+   --image=IMAGE    - xz compressed disk image
    --target=TARGET  - target board
 		      [beaglebone|Cubietruck|panda|trimslice|wandboard|wandboard_dl|wandboard_quad|wandboard_solo]
    --media=DEVICE   - media device file (/dev/[sdX|mmcblkX])
