@@ -9,7 +9,7 @@ usage() {
     echo "
 Usage: `basename ${0}` <options>
 
-   --image=IMAGE    - raw image file name
+   --image=IMAGE    - xz compressed image file name
    --target=TARGET  - target board
 		      [${TARGETS}]
    --media=DEVICE   - media device file (/dev/[sdX|mmcblkX])
