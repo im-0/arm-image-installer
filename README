@@ -1,0 +1,26 @@
+fedora-arm-image-installer.sh
+-----------------------------
+
+This script will automate the process of preparing a Fedora
+ARM disk image for use with various hardware targets.
+
+ - Write the selected disk image to media
+ - customize media with platform specific U-Boot file(s)
+ - Turn SE Linux on and off
+ - Remove the root password
+ 
+To add additional support, create a code snippet file 
+(bash script) in the "boards.d" subdirectory with the commands 
+needed to write U-Boot for the target board. 
+
+Usage: fedora-arm-image-installer.sh <options>
+
+   --image=IMAGE    - raw image file name
+   --target=TARGET  - target board
+		      [beaglebone|Cubietruck|panda|trimslice|wandboard|wandboard_dl|wandboard_quad|wandboard_solo]
+   --media=DEVICE   - media device file (/dev/[sdX|mmcblkX])
+   --selinux=ON/OFF - Turn SELinux off/on as needed
+   --norootpass     - Remove the root password
+    -y		    - Assumes yes, will not wait for confirmation.
+
+Example: fedora-arm-image-installer.sh --image=Fedora-Rawhide.xz --target=panda --media=/dev/mmcblk0 --selinux=OFF
