@@ -1,0 +1,223 @@
+#!/bin/bash
+
+# Automate Media Creation for Fedora ARM 
+# Current version
+VERSION=0.4
+
+# usage message
+usage() {
+    echo "
+Usage: `basename ${0}` <options>
+
+   --image=IMAGE    - raw image file name
+   --target=TARGET  - target board
+		      [${TARGETS}]
+   --media=DEVICE   - media device file (/dev/[sdX|mmcblkX])
+   --selinux=ON/OFF - Turn SELinux off/on as needed
+   --norootpass     - Remove the root password
+    -y		    - Assumes yes, will not wait for confirmation
+   --version	    - Display version and exit
+
+Example: `basename ${0}` --image=Fedora-Rawhide.xz --target=panda --media=/dev/mmcblk0" --selinux=OFF 
+}
+
+# Set some global variables for the command directory, target board directory,
+# and valid targets.
+DIR=`dirname $0`
+BOARDDIR=boards.d
+TARGETS=`ls -1 ${DIR}/${BOARDDIR}`
+TARGETS=`echo ${TARGETS} | sed -e 's/[[:space:]]/|/g'`
+
+# ensure sudo user
+if [ `sudo whoami` != "root" ] ; then
+	echo "Error: This script requires 'sudo' privileges in order to write to disk & mount media."
+	exit 1
+fi
+# check the args
+while [ $# -gt 0 ]; do
+    case $1 in
+	--debug)
+	    set -x
+	    ;;
+	-h|--help)
+	    usage
+	    ;;
+	--target*)
+            if echo $1 | grep '=' >/dev/null ; then
+                TARGET=`echo $1 | sed 's/^--target=//'`
+            else
+                TARGET=$2
+                shift
+            fi
+            ;;
+    	--image*)
+            if echo $1 | grep '=' >/dev/null ; then
+                IMAGE=`echo $1 | sed 's/^--image=//'`
+            else
+                IMAGE=$2
+                shift
+            fi
+            ;;
+    	--media*)
+            if echo $1 | grep '=' >/dev/null ; then
+                MEDIA=`echo $1 | sed 's/^--media=//'`
+            else
+                MEDIA=$2
+                shift
+	    fi
+	    ;;
+	--selinux*)
+            if echo $1 | grep '=' >/dev/null ; then
+                SELINUX=`echo $1 | sed 's/^--selinux=//'`
+            else
+                SELINUX=$2
+                shift
+            fi
+            ;;
+	--norootpass)
+            NOROOTPASS=1
+            ;;
+	--version)
+	    echo "`basename ${0}`-"$VERSION""
+	    exit 0
+	    ;;
+	-y)
+	    NOASK=1
+	    ;;
+    	*)
+	    echo "`basename ${0}`: Error - ${1}"
+            usage
+	    exit 1
+            ;;
+    	esac
+    shift
+done
+
+# check to make sure populated
+if [ "$MEDIA" = "" ] ; then
+  usage
+fi
+
+# change cubietruck target to uppercase
+if [ "$TARGET" = "cubietruck" ]; then
+        TARGET="Cubietruck"
+fi
+
+# check for boards
+if [ "$TARGET" != "" -a ! -e "${DIR}/${BOARDDIR}/${TARGET}" ] ; then
+      echo "Error: You must choose a supported board or none at all." 
+      usage
+      exit 1
+fi
+
+# image exists
+if [ ! -f "$IMAGE" ] && [ "$IMAGE" != "" ] ; then
+  echo "Error: $IMAGE not found! Please choose an existing image."
+  exit 1
+fi
+
+# device exists
+if [ ! -e "$MEDIA" ] ; then
+  echo "Error: $MEDIA not found! Please choose an existing device."
+  exit 1
+fi
+
+# check media type /dev/sdX or /dev/mmcblkX or loop device
+case $MEDIA in
+  	"/dev/mmcblk"*)
+    			BOOTPART="${MEDIA}p1"
+			ROOTPART="${MEDIA}p3"
+    			;;
+  	*)
+    			BOOTPART="${MEDIA}1"
+                        ROOTPART="${MEDIA}3"
+    			;;
+esac
+
+clear
+# Last chance to back out
+echo " "
+echo "====================================================="
+# Image if included
+if [ "$IMAGE" != "" ] ; then
+	echo "= Selected Image:                                 "
+	echo "= $IMAGE"
+fi
+echo "= Selected Media : $MEDIA"
+# target hardware platform
+if [ "$TARGET" != "" ] ; then 
+	echo "= U-Boot Target : $TARGET"
+fi
+# SE Linux On/Off
+if [ "$SELINUX" != "" ] ; then
+	echo "= SELINUX = $SELINUX"
+fi
+# Remove root password
+if [ "$NOROOTPASS" != "" ] ; then
+        echo "= Root Password will be removed."
+fi
+echo "====================================================="
+echo " "
+echo "*****************************************************"
+echo "*****************************************************"
+echo "******** WARNING! ALL DATA WILL BE DESTROYED ********"
+echo "*****************************************************"
+echo "*****************************************************"
+if [ "$NOASK" != 1 ] ; then 
+	echo " "
+	echo " Type 'YES' to proceed, anything else to exit now "
+	echo " "
+# wait for agreement
+	read -p "= Proceed? " PROCEED
+	if [ "`echo ${PROCEED} | tr [:lower:] [:upper:]`" != "YES" ] ; then
+		echo "User exit, no image written."
+		exit 0
+	fi
+fi
+# umount before starting
+sudo umount $MEDIA* &> /dev/null
+
+# Write the disk image to media
+if [ "$IMAGE" != "" ] ; then
+	echo "= Writing: "
+	echo "= $IMAGE "
+	echo "= To: $MEDIA ...."
+	xzcat $IMAGE | sudo dd of=$MEDIA; sync; sleep 3
+	echo "= Writing image complete!"
+# read the new partition table
+	sudo partprobe "$MEDIA"
+fi
+# make temp mount points
+mkdir /tmp/{boot,root} &> /dev/null
+sudo mount "$BOOTPART" /tmp/boot &> /dev/null
+sudo mount "$ROOTPART" /tmp/root &> /dev/null
+
+# turn off selinux
+if [ "$SELINUX" != "" ] ; then
+	if [ "`echo ${SELINUX} | tr [:lower:] [:upper:]`" = "OFF" ] ; then
+      		echo "= Turning SELinux off ..."
+	        sudo sed -i 's/append/& enforcing=0/' /tmp/boot/extlinux/extlinux.conf
+# turn on selinux
+	elif [ "`echo ${SELINUX} | tr [:lower:] [:upper:]`" = "ON" ] ; then
+    		echo "= Turning SELinux on ..."
+		sudo sed -i 's/ enforcing=0//' /tmp/boot/extlinux/extlinux.conf
+	fi
+fi
+# Remove root password
+if [ "$NOROOTPASS" = "1" ] ; then
+        	echo "= Removing the root password."
+	        sudo sed -i 's/root:x:/root::/' /tmp/root/etc/passwd
+fi
+# determine uboot and write to disk 
+if [ "$TARGET" = "" ]; then
+	echo "= No U-boot will be written."
+	TARGET="Mystery Board"
+else
+	. "${DIR}/${BOARDDIR}/${TARGET}"		
+fi
+
+sudo umount $ROOTPART $BOOTPART &> /dev/null
+
+echo ""
+echo "= Installation Complete! Insert into the "$TARGET" and boot."
+exit 0
