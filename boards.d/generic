@@ -1,2 +1,0 @@
-# No U-Boot needed
-echo "= U-Boot is included on this device, none will be written."
