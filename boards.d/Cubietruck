@@ -1,9 +1,4 @@
 # write uboot
-echo "= Official PXE support pending, downloading firmware w/ PXE..."
-sudo rm -rf /tmp/$TARGET/
-mkdir /tmp/$TARGET/
-curl http://rhel/fedora/uboot-archive/cubietruck/U-Boot-2014.10-rc1-00476-gbf4ca38/u-boot-sunxi-with-spl.bin > /tmp/$TARGET/u-boot-sunxi-with-spl.bin
 echo "= Writing u-boot-sunxi-with-spl.bin ...."
-#sudo dd if=/tmp/root/usr/share/uboot/$TARGET/u-boot-sunxi-with-spl.bin of=$MEDIA bs=1024 seek=8; sync; sleep 5
-sudo dd if=/tmp/$TARGET/u-boot-sunxi-with-spl.bin of=$MEDIA bs=1024 seek=8; sync; sleep 5
+sudo dd if=/tmp/root/usr/share/uboot/$TARGET/u-boot-sunxi-with-spl.bin of=$MEDIA bs=1024 seek=8; sync; sleep 5
 
