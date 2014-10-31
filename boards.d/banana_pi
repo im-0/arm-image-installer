@@ -1,8 +1,0 @@
-# write uboot
-echo "= Official support pending, downloading firmware..."
-sudo rm -rf /tmp/bananapi/
-mkdir /tmp/bananapi/
-curl http://rhel/fedora/uboot-archive/bpi/U-Boot-2014.10-rc1-00476-gbf4ca38/u-boot-sunxi-with-spl.bin > /tmp/bananapi/u-boot-sunxi-with-spl.bin
-echo "= Writing u-boot-sunxi-with-spl.bin ...."
-sudo dd if=/tmp/bananapi/u-boot-sunxi-with-spl.bin of=$MEDIA bs=1024 seek=8; sync; sleep 5
-
