@@ -1,13 +1,17 @@
+Fedora ARM Tools
+=================
+
 fedora-arm-image-installer.sh
 -----------------------------
 
 This script will automate the process of preparing a Fedora
 ARM disk image for use with various hardware targets.
 
- - Write the selected disk image to media
+ - Write the selected disk image to media (optional)
  - customize media with platform specific U-Boot file(s)
  - Turn SE Linux on and off
  - Remove the root password
+ - Update U-Boot for another Target
  
 To add additional support, create a code snippet file 
 (bash script) in the "boards.d" subdirectory with the commands 
@@ -15,12 +19,45 @@ needed to write U-Boot for the target board.
 
 Usage: fedora-arm-image-installer.sh <options>
 
-   --image=IMAGE    - xz compressed disk image
+   --image=IMAGE    - xz compressed image file name
    --target=TARGET  - target board
-		      [beaglebone|Cubietruck|panda|trimslice|wandboard|wandboard_dl|wandboard_quad|wandboard_solo]
+		      [Bananapi|beaglebone|Cubieboard|Cubieboard2|Cubietruck|Mele_A1000|Mele_A1000G|panda|trimslice|wandboard_dual|wandboard_quad|wandboard_solo]
    --media=DEVICE   - media device file (/dev/[sdX|mmcblkX])
    --selinux=ON/OFF - Turn SELinux off/on as needed
    --norootpass     - Remove the root password
-    -y		    - Assumes yes, will not wait for confirmation.
+    -y		    - Assumes yes, will not wait for confirmation
+   --version	    - Display version and exit
 
 Example: fedora-arm-image-installer.sh --image=Fedora-Rawhide.xz --target=panda --media=/dev/mmcblk0 --selinux=OFF
+
+
+create-install-media.sh
+-----------------------
+
+Create network installation media for supported ARM devices. This script will format specified media, rsync the 
+pxeimages directory from the Fedora 22 Alpha release and create a custom 'extlinux.conf' for a network installation.
+Requires U-Boot be written to mSD/SD on target platform. Tested on USB with Cubietruck and Banana Pi. 
+
+Usage: create-install-media.sh <options>
+
+   --media=DEVICE   - media device file (/dev/[sdX|mmcblkX])
+   --url=URL	    - Optional URL, Mastermirror used as default
+
+Example: create-install-media.sh --media=/dev/mmcblk0
+
+
+download-install-uboot.sh
+-------------------------
+
+Download the latest uboot-images rpm from Koji and install U-Boot for the desired target platform.
+Useful for testing the latest build. Default is Fedora 22. 
+
+Usage: download-install-uboot.sh <options>
+
+   --target=TARGET  - target board
+                      [Bananapi|beaglebone|Cubieboard|Cubieboard2|Cubietruck|Mele_A1000|Mele_A1000G|panda|trimslice|wandboard_dual|wandboard_quad|wandboard_solo]
+   --media=DEVICE   - media device file (/dev/[sdX|mmcblkX])
+   --tag=KOJI TAG   - koji tag (Default is f22. f21, f21-updates etc..)
+
+Example: download-install-uboot.sh --target=panda --media=/dev/mmcblk0
+
