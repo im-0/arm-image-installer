@@ -2,12 +2,12 @@
 
 # Automate Media Creation for Fedora ARM 
 # Current version
-VERSION=0.6
+VERSION=0.7
 
 # usage message
 usage() {
     echo "
-Usage: `basename ${0}` <options>
+Usage: $(basename ${0}) <options>
 
    --image=IMAGE    - xz compressed image file name
    --target=TARGET  - target board
@@ -18,18 +18,18 @@ Usage: `basename ${0}` <options>
     -y		    - Assumes yes, will not wait for confirmation
    --version	    - Display version and exit
 
-Example: `basename ${0}` --image=Fedora-Rawhide.xz --target=panda --media=/dev/mmcblk0" --selinux=OFF 
+Example: $(basename ${0}) --image=Fedora-Rawhide.xz --target=panda --media=/dev/mmcblk0" --selinux=OFF 
 }
 
 # Set some global variables for the command directory, target board directory,
 # and valid targets.
-DIR=`dirname $0`
+DIR=$(dirname $0)
 BOARDDIR=boards.d
-TARGETS=`ls -1 ${DIR}/${BOARDDIR}`
-TARGETS=`echo ${TARGETS} | sed -e 's/[[:space:]]/|/g'`
+TARGETS=$(ls -1 ${DIR}/${BOARDDIR})
+TARGETS=$(echo ${TARGETS} | sed -e 's/[[:space:]]/|/g')
 
 # ensure sudo user
-if [ `sudo whoami` != "root" ] ; then
+if [ $(sudo whoami) != "root" ] ; then
 	echo "Error: This script requires 'sudo' privileges in order to write to disk & mount media."
 	exit 1
 fi
@@ -44,7 +44,7 @@ while [ $# -gt 0 ]; do
 	    ;;
 	--target*)
             if echo $1 | grep '=' >/dev/null ; then
-                TARGET=`echo $1 | sed 's/^--target=//'`
+                TARGET=$(echo $1 | sed 's/^--target=//')
             else
                 TARGET=$2
                 shift
@@ -52,7 +52,7 @@ while [ $# -gt 0 ]; do
             ;;
     	--image*)
             if echo $1 | grep '=' >/dev/null ; then
-                IMAGE=`echo $1 | sed 's/^--image=//'`
+                IMAGE=$(echo $1 | sed 's/^--image=//')
             else
                 IMAGE=$2
                 shift
@@ -60,7 +60,7 @@ while [ $# -gt 0 ]; do
             ;;
     	--media*)
             if echo $1 | grep '=' >/dev/null ; then
-                MEDIA=`echo $1 | sed 's/^--media=//'`
+                MEDIA=$(echo $1 | sed 's/^--media=//')
             else
                 MEDIA=$2
                 shift
@@ -68,7 +68,7 @@ while [ $# -gt 0 ]; do
 	    ;;
 	--selinux*)
             if echo $1 | grep '=' >/dev/null ; then
-                SELINUX=`echo $1 | sed 's/^--selinux=//'`
+                SELINUX=$(echo $1 | sed 's/^--selinux=//')
             else
                 SELINUX=$2
                 shift
@@ -78,14 +78,14 @@ while [ $# -gt 0 ]; do
             NOROOTPASS=1
             ;;
 	--version)
-	    echo "`basename ${0}`-"$VERSION""
+	    echo "$(basename ${0})-"$VERSION""
 	    exit 0
 	    ;;
 	-y)
 	    NOASK=1
 	    ;;
     	*)
-	    echo "`basename ${0}`: Error - ${1}"
+	    echo "$(basename ${0}): Error - ${1}"
             usage
 	    exit 1
             ;;
@@ -169,7 +169,7 @@ if [ "$NOASK" != 1 ] ; then
 	echo " "
 # wait for agreement
 	read -p "= Proceed? " PROCEED
-	if [ "`echo ${PROCEED} | tr [:lower:] [:upper:]`" != "YES" ] ; then
+	if [ "$(echo ${PROCEED} | tr [:lower:] [:upper:])" != "YES" ] ; then
 		echo "User exit, no image written."
 		exit 0
 	fi
@@ -182,7 +182,7 @@ if [ "$IMAGE" != "" ] ; then
 	echo "= Writing: "
 	echo "= $IMAGE "
 	echo "= To: $MEDIA ...."
-	xzcat $IMAGE | sudo dd of=$MEDIA; sync; sleep 3
+	xzcat $IMAGE | sudo dd of=$MEDIA bs=1M; sync; sleep 3
 	echo "= Writing image complete!"
 # read the new partition table
 	sudo partprobe "$MEDIA"
@@ -194,11 +194,11 @@ sudo mount "$ROOTPART" /tmp/root &> /dev/null
 
 # turn off selinux
 if [ "$SELINUX" != "" ] ; then
-	if [ "`echo ${SELINUX} | tr [:lower:] [:upper:]`" = "OFF" ] ; then
+	if [ "$(echo ${SELINUX} | tr [:lower:] [:upper:])" = "OFF" ] ; then
       		echo "= Turning SELinux off ..."
 	        sudo sed -i 's/append/& enforcing=0/' /tmp/boot/extlinux/extlinux.conf
 # turn on selinux
-	elif [ "`echo ${SELINUX} | tr [:lower:] [:upper:]`" = "ON" ] ; then
+	elif [ "$(echo ${SELINUX} | tr [:lower:] [:upper:])" = "ON" ] ; then
     		echo "= Turning SELinux on ..."
 		sudo sed -i 's/ enforcing=0//' /tmp/boot/extlinux/extlinux.conf
 	fi
