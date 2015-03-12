@@ -5,7 +5,7 @@
 
 # Automate Media Creation for Fedora ARM 
 # Current version
-VERSION=0.7
+VERSION=0.8.0
 
 # usage message
 usage() {
