@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Copyright (C) 2013 Red Hat Inc.
+# SPDX-License-Identifier:  GPL-2.0+
+
 # This script will download and install uboot
 
 # usage message

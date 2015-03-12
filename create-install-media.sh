@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Copyright (C) 2014-2015 Red Hat Inc.
+# SPDX-License-Identifier:  GPL-2.0+
 
 # usage message
 usage() {
