@@ -1,3 +1,10 @@
-- ToDo
-* 
-* 
+ToDo
+
+The mighty todo list. Some of these are things that should be implemented, some 
+just ideas that might, or might not work.
+
+- resizing of root partition
+- flashing an image over USB using dfu-util
+- menu system to group systems by SoC to scale list as device support grows
+- support for tegrarcm to write out uboot for tegra devices over USB
+- duplicating a currently running system from a SD card to an onboard eMMC
