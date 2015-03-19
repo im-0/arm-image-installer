@@ -27,8 +27,13 @@ Example: $(basename ${0}) --image=Fedora-Rawhide.xz --target=panda --media=/dev/
 # Set some global variables for the command directory, target board directory,
 # and valid targets.
 DIR=$(dirname $0)
-BOARDDIR=boards.d
-TARGETS=$(ls -1 ${DIR}/${BOARDDIR})
+if [ -d "/usr/share/fedora-arm-installer/boards.d" ]; then 
+  BOARDDIR="/usr/share/fedora-arm-installer/boards.d"
+else
+  DIR=$(dirname $0)
+  BOARDDIR="${DIR}/boards.d"
+fi
+TARGETS=$(ls -1 ${BOARDDIR})
 TARGETS=$(echo ${TARGETS} | sed -e 's/[[:space:]]/|/g')
 
 # ensure sudo user
@@ -107,7 +112,7 @@ if [ "$TARGET" = "cubietruck" ]; then
 fi
 
 # check for boards
-if [ "$TARGET" != "" -a ! -e "${DIR}/${BOARDDIR}/${TARGET}" ] ; then
+if [ "$TARGET" != "" -a ! -e "${BOARDDIR}/${TARGET}" ] ; then
       echo "Error: You must choose a supported board or none at all." 
       usage
       exit 1
@@ -216,7 +221,7 @@ if [ "$TARGET" = "" ]; then
 	echo "= No U-boot will be written."
 	TARGET="Mystery Board"
 else
-	. "${DIR}/${BOARDDIR}/${TARGET}"		
+	. "${BOARDDIR}/${TARGET}"
 fi
 
 sudo umount $ROOTPART $BOOTPART &> /dev/null
