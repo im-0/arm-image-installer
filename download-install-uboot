@@ -60,8 +60,12 @@ while [ $# -gt 0 ]; do
     shift
 done
 
-DIR=$(dirname $0)
-BOARDDIR=boards.d
+if [ -d "/usr/share/fedora-arm-installer/boards.d" ]; then
+  BOARDDIR="/usr/share/fedora-arm-installer/boards.d"
+else
+  DIR=$(dirname $0)
+  BOARDDIR="${DIR}/boards.d"
+fi
 TARGETS=$(ls -1 ${DIR}/${BOARDDIR})
 TARGETS=$(echo ${TARGETS} | sed -e 's/[[:space:]]/|/g')
 
