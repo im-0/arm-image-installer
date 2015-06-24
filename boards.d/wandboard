@@ -1,3 +1,6 @@
 # write uboot
-echo "= Writing u-boot.imx ...."
-sudo dd if=$PREFIX/usr/share/uboot/$TARGET/u-boot.imx of=$MEDIA bs=1k seek=1 conv=fsync; sync
+echo "= Writing SPL ...."
+dd if=$PREFIX/usr/share/uboot/$TARGET/SPL of=$MEDIA seek=1 bs=1k
+echo "= Writing u-boot.img ...."
+sudo dd if=$PREFIX/usr/share/uboot/$TARGET/u-boot.img of=$MEDIA bs=1k seek=69 conv=fsync; sync
+
