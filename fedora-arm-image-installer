@@ -190,7 +190,7 @@ if [ "$IMAGE" != "" ] ; then
 	echo "= Writing: "
 	echo "= $IMAGE "
 	echo "= To: $MEDIA ...."
-	xzcat $IMAGE | sudo dd of=$MEDIA bs=1M; sync; sleep 3
+	xzcat $IMAGE | sudo dd of=$MEDIA bs=4M; sync; sleep 3
 	echo "= Writing image complete!"
 # read the new partition table
 	sudo partprobe "$MEDIA"
