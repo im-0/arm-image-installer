@@ -20,6 +20,7 @@ Usage: $(basename ${0}) <options>
    --norootpass     - Remove the root password
     -y		    - Assumes yes, will not wait for confirmation
    --version	    - Display version and exit
+   --resizefs	    - Resize root filesystem to fill media device
 
 Example: $(basename ${0}) --image=Fedora-Rawhide.xz --target=panda --media=/dev/mmcblk0" --selinux=OFF 
 }
@@ -84,6 +85,9 @@ while [ $# -gt 0 ]; do
             ;;
 	--norootpass)
             NOROOTPASS=1
+            ;;
+	--resizefs)
+            RESIZEFS=1
             ;;
 	--version)
 	    echo "$(basename ${0})-"$VERSION""
@@ -164,6 +168,10 @@ fi
 if [ "$NOROOTPASS" != "" ] ; then
         echo "= Root Password will be removed."
 fi
+# Resize root filesystem to fill media device
+if [ "$RESIZEFS" != "" ] ; then
+        echo "= Root partition will be resized"
+fi
 echo "====================================================="
 echo " "
 echo "*****************************************************"
@@ -195,6 +203,16 @@ if [ "$IMAGE" != "" ] ; then
 # read the new partition table
 	sudo partprobe "$MEDIA"
 fi
+
+# resize root filesystem before mounting
+if [ "$RESIZEFS" != "" ] ; then
+	echo "= Resizing $MEDIA ...."
+	sync
+	echo ", +" | sudo sfdisk -N 3 "$MEDIA"
+	sudo e2fsck -f "$ROOTPART"
+	sudo resize2fs "$ROOTPART"
+fi
+
 # make temp mount points
 mkdir /tmp/{boot,root} &> /dev/null
 sudo mount "$BOOTPART" /tmp/boot &> /dev/null
