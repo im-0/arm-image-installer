@@ -209,7 +209,7 @@ if [ "$RESIZEFS" != "" ] ; then
 	echo "= Resizing $MEDIA ...."
 	sync
 	echo ", +" | sudo sfdisk -N 3 "$MEDIA"
-	sudo e2fsck -f "$ROOTPART"
+	sudo fsck.ext4 -fy "$ROOTPART"
 	sudo resize2fs "$ROOTPART"
 fi
 
