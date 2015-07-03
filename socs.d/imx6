@@ -1,3 +1,11 @@
-# write uboot
+if [ -f "$PREFIX/usr/share/uboot/$TARGET/SPL" ]; then
+# write a SPL uboot if it's present
+echo "= Writing SPL ...."
+dd if=$PREFIX/usr/share/uboot/$TARGET/SPL of=$MEDIA seek=1 bs=1k
+echo "= Writing u-boot.img ...."
+sudo dd if=$PREFIX/usr/share/uboot/$TARGET/u-boot.img of=$MEDIA bs=1k seek=69 conv=fsync; sync
+else
+# else fail back to traditional uboot
 echo "= Writing u-boot.imx ...."
 sudo dd if=/tmp/root/usr/share/uboot/$TARGET/u-boot.imx of=$MEDIA bs=1k seek=1 conv=fsync; sync
+fi
