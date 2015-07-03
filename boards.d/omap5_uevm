@@ -1,6 +1,1 @@
-# write MLO & U-Boot
-echo "= Writing MLO for $TARGET...."
-sudo dd if=$PREFIX/usr/share/uboot/$TARGET/MLO of=$MEDIA count=1 seek=1 conv=notrunc bs=128k; sync
-echo "= Writing u-boot.img for $TARGET...."
-sudo dd if=$PREFIX/usr/share/uboot/$TARGET/u-boot.img of=$MEDIA count=2 seek=1 conv=notrunc bs=384k; sync
-
+../socs.d/omap4

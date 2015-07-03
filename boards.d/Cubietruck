@@ -1,4 +1,0 @@
-# write uboot
-echo "= Writing u-boot-sunxi-with-spl.bin ...."
-sudo dd if=$PREFIX/usr/share/uboot/$TARGET/u-boot-sunxi-with-spl.bin of=$MEDIA bs=1024 seek=8; sync; sleep 5
-
