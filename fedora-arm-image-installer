@@ -210,6 +210,7 @@ if [ "$RESIZEFS" != "" ] ; then
 	sync
 	echo ", +" | sudo sfdisk -N 3 "$MEDIA"
 	sudo fsck.ext4 -fy "$ROOTPART"
+	sudo partprobe "$MEDIA"
 	sudo resize2fs "$ROOTPART"
 fi
 
