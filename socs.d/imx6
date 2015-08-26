@@ -9,3 +9,5 @@ else
 echo "= Writing u-boot.imx ...."
 sudo dd if=$PREFIX/usr/share/uboot/$TARGET/u-boot.imx of=$MEDIA bs=1k seek=1 conv=fsync; sync
 fi
+# set console for imx6
+SYSCON=/dev/ttymxc0,115200
