@@ -251,7 +251,7 @@ else
 	PREFIX=/tmp/root
 	. "${BOARDDIR}/${TARGET}"
 	# Add console
-        if [ "CONSOLE" = "1" ] && [ "$SYSCON" != "" ] ; then
+        if [ "$CONSOLE" = "1" ] && [ "$SYSCON" != "" ] ; then
                 echo "= Adding console $SYSCON to extlinux.conf ..."
                 sudo sed -i "s|append|& console=$SYSCON|" /tmp/boot/extlinux/extlinux.conf
         fi
