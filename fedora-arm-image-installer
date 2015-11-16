@@ -51,6 +51,7 @@ while [ $# -gt 0 ]; do
 	    ;;
 	-h|--help)
 	    usage
+	    exit 0
 	    ;;
 	--target*)
             if echo $1 | grep '=' >/dev/null ; then
