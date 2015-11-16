@@ -1,5 +1,5 @@
 # get wget http://tekkamanninja.fedorapeople.org/boards/arndale/u-boot/arndale-bl1.bin
-curl -o /tmp/arndale-bl1.bin http://tekkamanninja.fedorapeople.org/boards/arndale/u-boot/arndale-bl1.bin
+curl -o /tmp/arndale-bl1.bin https://tekkamanninja.fedorapeople.org/boards/arndale/u-boot/arndale-bl1.bin
 
 cat $PREFIX/usr/share/uboot/$TARGET/u-boot.bin $PREFIX/usr/share/uboot/$TARGET/u-boot.dtb > /tmp/u-boot-dtb.bin
 
