@@ -1,8 +1,8 @@
 Fedora ARM Tools
 =================
 
-fedora-arm-image-installer.sh
------------------------------
+arm-image-installer
+-------------------
 
 This script will automate the process of preparing a Fedora
 ARM disk image for use with various hardware targets.
@@ -17,7 +17,7 @@ To add additional support, create a code snippet file
 (bash script) in the "boards.d" subdirectory with the commands 
 needed to write U-Boot for the target board. 
 
-Usage: fedora-arm-image-installer.sh <options>
+Usage: arm-image-installer <options>
 
    --image=IMAGE    - xz compressed image file name
    --target=TARGET  - target board
@@ -28,36 +28,36 @@ Usage: fedora-arm-image-installer.sh <options>
     -y		    - Assumes yes, will not wait for confirmation
    --version	    - Display version and exit
 
-Example: fedora-arm-image-installer.sh --image=Fedora-Rawhide.xz --target=panda --media=/dev/mmcblk0 --selinux=OFF
+Example: arm-image-installer --image=Fedora-Rawhide.xz --target=panda --media=/dev/mmcblk0 --selinux=OFF
 
 
-create-install-media.sh
------------------------
+create-install-media
+--------------------
 
 Create network installation media for supported ARM devices. This script will format specified media, rsync the 
 pxeimages directory from the Fedora 22 Alpha release and create a custom 'extlinux.conf' for a network installation.
 Requires U-Boot be written to mSD/SD on target platform. Tested on USB with Cubietruck and Banana Pi. 
 
-Usage: create-install-media.sh <options>
+Usage: create-install-media <options>
 
    --media=DEVICE   - media device file (/dev/[sdX|mmcblkX])
    --url=URL	    - Optional URL, Mastermirror used as default
 
-Example: create-install-media.sh --media=/dev/mmcblk0
+Example: create-install-media --media=/dev/mmcblk0
 
 
-download-install-uboot.sh
--------------------------
+update-uboot
+------------
 
-Download the latest uboot-images rpm from Koji and install U-Boot for the desired target platform.
-Useful for testing the latest build. Default is Fedora 22. 
+Update to a new u-boot on a disk image from a local host install. Optionally download a specified
+newer u-boot from koji by specifying a koji tag.
 
-Usage: download-install-uboot.sh <options>
+Usage: update-uboot <options>
 
    --target=TARGET  - target board
                       [Bananapi|beaglebone|Cubieboard|Cubieboard2|Cubietruck|Mele_A1000|Mele_A1000G|panda|trimslice|wandboard_dual|wandboard_quad|wandboard_solo]
    --media=DEVICE   - media device file (/dev/[sdX|mmcblkX])
    --tag=KOJI TAG   - koji tag (Default is f22. f21, f21-updates etc..)
 
-Example: download-install-uboot.sh --target=panda --media=/dev/mmcblk0
+Example: update-uboot --target=panda --media=/dev/mmcblk0
 

@@ -29,8 +29,8 @@ Example: $(basename ${0}) --image=Fedora-Rawhide.xz --target=panda --media=/dev/
 # Set some global variables for the command directory, target board directory,
 # and valid targets.
 DIR=$(dirname $0)
-if [ -d "/usr/share/fedora-arm-installer/boards.d" ]; then 
-  BOARDDIR="/usr/share/fedora-arm-installer/boards.d"
+if [ -d "/usr/share/arm-installer/boards.d" ]; then
+  BOARDDIR="/usr/share/arm-installer/boards.d"
 else
   DIR=$(dirname $0)
   BOARDDIR="${DIR}/boards.d"
