@@ -60,8 +60,8 @@ while [ $# -gt 0 ]; do
     shift
 done
 
-if [ -d "/usr/share/fedora-arm-installer/boards.d" ]; then
-  BOARDDIR="/usr/share/fedora-arm-installer/boards.d"
+if [ -d "/usr/share/arm-image-installer/boards.d" ]; then
+  BOARDDIR="/usr/share/arm-image-installer/boards.d"
 else
   DIR=$(dirname $0)
   BOARDDIR="${DIR}/boards.d"
