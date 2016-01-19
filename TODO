@@ -11,3 +11,4 @@ just ideas that might, or might not work.
 - Dynamic list of devices supported based on available u-boot firmwares and/or known means of writing out SoC options
 - Support writing images with hosts that support uEFI
 - Support for aarch64 devices
+- Support writing u-boot to NAND devices like C.H.I.P.
