@@ -106,7 +106,7 @@ while [ $# -gt 0 ]; do
 done
 
 # ensure sudo user
-if [ $(sudo whoami) != "root" ] ; then
+if [ "$(sudo whoami)" != "root" ] ; then
 	echo "Error: This script requires 'sudo' privileges in order to write to disk & mount media."
 	exit 1
 fi
