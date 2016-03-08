@@ -38,11 +38,6 @@ fi
 TARGETS=$(ls -1 ${BOARDDIR})
 TARGETS=$(echo ${TARGETS} | sed -e 's/[[:space:]]/|/g')
 
-# ensure sudo user
-if [ $(sudo whoami) != "root" ] ; then
-	echo "Error: This script requires 'sudo' privileges in order to write to disk & mount media."
-	exit 1
-fi
 # check the args
 while [ $# -gt 0 ]; do
     case $1 in
@@ -109,6 +104,12 @@ while [ $# -gt 0 ]; do
     	esac
     shift
 done
+
+# ensure sudo user
+if [ $(sudo whoami) != "root" ] ; then
+	echo "Error: This script requires 'sudo' privileges in order to write to disk & mount media."
+	exit 1
+fi
 
 # check to make sure populated
 if [ "$MEDIA" = "" ] ; then
