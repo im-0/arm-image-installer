@@ -23,7 +23,7 @@ Usage: $(basename ${0}) <options>
    --resizefs	    - Resize root filesystem to fill media device
    --addconsole     - Add system console to extlinux.conf
 
-Example: $(basename ${0}) --image=Fedora-Rawhide.xz --target=panda --media=/dev/mmcblk0" --selinux=OFF 
+Example: $(basename ${0}) --image=Fedora-Rawhide.xz --target=Bananapi --media=/dev/mmcblk0" --selinux=OFF 
 }
 
 # Set some global variables for the command directory, target board directory,
