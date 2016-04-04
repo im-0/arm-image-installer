@@ -92,10 +92,10 @@ if [[ $KOJI_TAG != '' ]] ; then
 
 #get the latest uboot
 	pushd $PREFIX &> /dev/null
-	if [ $KOJI_TAG = f23 ]; then
-		koji download-build --arch=noarch --latestfrom=$KOJI_TAG uboot-tools
-		else
+	if [ $KOJI_TAG = f22 ]; then
 		koji download-build --arch=armv7hl --latestfrom=$KOJI_TAG uboot-tools
+		else
+		koji download-build --arch=noarch --latestfrom=$KOJI_TAG uboot-tools
 	fi
 	# unpack uboot
 	rpm2cpio uboot-images*.rpm | cpio -idv &> /dev/null
