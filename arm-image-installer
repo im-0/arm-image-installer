@@ -114,6 +114,7 @@ fi
 # check to make sure populated
 if [ "$MEDIA" = "" ] ; then
   usage
+  exit 1
 fi
 
 # change cubietruck target to uppercase
