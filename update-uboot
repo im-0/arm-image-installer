@@ -20,51 +20,51 @@ Example: $(basename ${0}) --target=panda --media=/dev/mmcblk0"
 
 # check the args
 while [ $# -gt 0 ]; do
-    case $1 in
-        --debug)
-            set -x
-            ;;
-        -h|--help)
-            usage
-            ;;
-        --target*)
-            if echo $1 | grep '=' >/dev/null ; then
-                TARGET=$(echo $1 | sed 's/^--target=//')
-            else
-                TARGET=$2
-                shift
-            fi
-            ;;
-        --media*)
-            if echo $1 | grep '=' >/dev/null ; then
-                MEDIA=$(echo $1 | sed 's/^--media=//')
-            else
-                MEDIA=$2
-                shift
-            fi
-            ;;
-	--tag*)
-            if echo $1 | grep '=' >/dev/null ; then
-                KOJI_TAG=$(echo $1 | sed 's/^--tag=//')
-            else
-                KOJI_TAG=$2
-                shift
-            fi
-            ;;
-        *)
-            echo "$(basename ${0}): Error - ${1}"
-            usage
-            exit 1
-            ;;
+        case $1 in
+                --debug)
+                        set -x
+                        ;;
+                -h|--help)
+                        usage
+                        ;;
+                --target*)
+                        if echo $1 | grep '=' >/dev/null ; then
+                                TARGET=$(echo $1 | sed 's/^--target=//')
+                        else
+                                TARGET=$2
+                                shift
+                        fi
+                        ;;
+                --media*)
+                        if echo $1 | grep '=' >/dev/null ; then
+                                MEDIA=$(echo $1 | sed 's/^--media=//')
+                        else
+                                MEDIA=$2
+                                shift
+                        fi
+                        ;;
+                --tag*)
+                        if echo $1 | grep '=' >/dev/null ; then
+                                KOJI_TAG=$(echo $1 | sed 's/^--tag=//')
+                        else
+                                KOJI_TAG=$2
+                                shift
+                        fi
+                        ;;
+                *)
+                        echo "$(basename ${0}): Error - ${1}"
+                        usage
+                        exit 1
+                        ;;
         esac
-    shift
+        shift
 done
 
 if [ -d "/usr/share/arm-image-installer/boards.d" ]; then
-  BOARDDIR="/usr/share/arm-image-installer/boards.d"
+        BOARDDIR="/usr/share/arm-image-installer/boards.d"
 else
-  DIR=$(dirname $0)
-  BOARDDIR="${DIR}/boards.d"
+        DIR=$(dirname $0)
+        BOARDDIR="${DIR}/boards.d"
 fi
 TARGETS=$(ls -1 ${DIR}/${BOARDDIR})
 TARGETS=$(echo ${TARGETS} | sed -e 's/[[:space:]]/|/g')
@@ -82,25 +82,25 @@ if [[ $TARGET = '' ]] ; then
         exit 1
 fi
 if [[ $KOJI_TAG != '' ]] ; then
-	if [[ ! -f /usr/bin/koji ]]; then
-	 echo "Please install koji-utils for this option."
-	 exit 1
-	 else
-	PREFIX='/tmp/root/'
-	sudo rm -rf /tmp/root &> /dev/null
-	mkdir $PREFIX
+        if [[ ! -f /usr/bin/koji ]]; then
+                echo "Please install koji-utils for this option."
+                exit 1
+        else
+                PREFIX='/tmp/root/'
+                sudo rm -rf /tmp/root &> /dev/null
+                mkdir $PREFIX
 
-#get the latest uboot
-	pushd $PREFIX &> /dev/null
-	if [ $KOJI_TAG = f22 ]; then
-		koji download-build --arch=armv7hl --latestfrom=$KOJI_TAG uboot-tools
-		else
-		koji download-build --arch=noarch --latestfrom=$KOJI_TAG uboot-tools
-	fi
-	# unpack uboot
-	rpm2cpio uboot-images*.rpm | cpio -idv &> /dev/null
-	popd &> /dev/null
-fi
+                #get the latest uboot
+                pushd $PREFIX &> /dev/null
+                if [ $KOJI_TAG = f22 ]; then
+                        koji download-build --arch=armv7hl --latestfrom=$KOJI_TAG uboot-tools
+                else
+                        koji download-build --arch=noarch --latestfrom=$KOJI_TAG uboot-tools
+                fi
+                # unpack uboot
+                rpm2cpio uboot-images*.rpm | cpio -idv &> /dev/null
+                popd &> /dev/null
+        fi
 fi
 # determine uboot and write to disk 
 if [ "$TARGET" = "" ]; then
@@ -111,3 +111,5 @@ else
 fi
 
 echo "= Complete!"
+
+# vi: tabstop=8 softtabstop=0 expandtab shiftwidth=8 smarttab

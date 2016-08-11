@@ -16,47 +16,47 @@ Example: $(basename ${0}) --media=/dev/mmcblk0"
 
 # check the args
 while [ $# -gt 0 ]; do
-    case $1 in
-        --debug)
-            set -x
-            ;;
-        -h|--help)
-            usage
-            ;;
-	--media*)
-            if echo $1 | grep '=' >/dev/null ; then
-                MEDIA=$(echo $1 | sed 's/^--media=//')
-            else
-                MEDIA=$2
-                shift
-            fi
-            ;;
-	--url*)
-	    if echo $1 | grep '=' >/dev/null ; then
-		URL=$(echo $1 | sed 's/^--url=//')
-	    else
-		URL=$2
-		shift
-	    fi
-            ;;
-        *)
-            echo "$(basename ${0}): Error - ${1}"
-            usage
-            exit 1
-            ;;
+        case $1 in
+                --debug)
+                        set -x
+                        ;;
+                -h|--help)
+                        usage
+                        ;;
+                --media*)
+                        if echo $1 | grep '=' >/dev/null ; then
+                                MEDIA=$(echo $1 | sed 's/^--media=//')
+                        else
+                                MEDIA=$2
+                                shift
+                        fi
+                        ;;
+                --url*)
+                        if echo $1 | grep '=' >/dev/null ; then
+                                URL=$(echo $1 | sed 's/^--url=//')
+                        else
+                                URL=$2
+                                shift
+                        fi
+                        ;;
+                *)
+                        echo "$(basename ${0}): Error - ${1}"
+                        usage
+                        exit 1
+                        ;;
         esac
-    shift
+        shift
 done
 
 # check if media exists
 if [[ ! -e $MEDIA ]] ; then 
-	echo "Missing media"
-	usage
-	exit 1
+        echo "Missing media"
+        usage
+        exit 1
 fi 
 # check if url specified if not use mastermirror
 if [[ $URL = '' ]] ; then
-	URL="http://dl.fedoraproject.org/pub/fedora/linux/releases/22/Server/armhfp/os/"
+        URL="http://dl.fedoraproject.org/pub/fedora/linux/releases/22/Server/armhfp/os/"
 fi
 
 # unmount media
@@ -74,11 +74,11 @@ sudo partprobe $MEDIA
 # check media type /dev/sdX or /dev/mmcblkX
 case $MEDIA in
         "/dev/mmcblk"*)
-                        PART1="${MEDIA}p1"
-                        ;;
+                PART1="${MEDIA}p1"
+                ;;
         *)
-                        PART1="${MEDIA}1"
-                        ;;
+                PART1="${MEDIA}1"
+                ;;
 esac
 
 # create filesystem
@@ -106,12 +106,14 @@ timeout 20
 totaltimeout 600
 
 label Fedora 22_Server Installer for ARM
-	kernel /vmlinuz
-	append inst.repo=$URL
-	fdtdir /dtb/
-	initrd /initrd.img
+kernel /vmlinuz
+append inst.repo=$URL
+fdtdir /dtb/
+initrd /initrd.img
 EOF
 sudo mv /tmp/extlinux.conf /tmp/install-card/extlinux/
 sync
 sudo umount $MEDIA* &> /dev/null
 echo "= Complete!"
+
+# vi: tabstop=8 softtabstop=0 expandtab shiftwidth=8 smarttab
