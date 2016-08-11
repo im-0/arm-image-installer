@@ -202,49 +202,49 @@ if [ "$NOASK" != 1 ] ; then
 	fi
 fi
 # umount before starting
-sudo umount $MEDIA* &> /dev/null
+umount $MEDIA* &> /dev/null
 
 # Write the disk image to media
 if [ "$IMAGE" != "" ] ; then
 	echo "= Writing: "
 	echo "= $IMAGE "
 	echo "= To: $MEDIA ...."
-	xzcat $IMAGE | sudo dd of=$MEDIA bs=4M; sync; sleep 3
+	xzcat $IMAGE | dd of=$MEDIA bs=4M; sync; sleep 3
 	echo "= Writing image complete!"
 # read the new partition table
-	sudo partprobe "$MEDIA"
+	partprobe "$MEDIA"
 fi
 
 # resize root filesystem before mounting
 if [ "$RESIZEFS" != "" ] ; then
 	echo "= Resizing $MEDIA ...."
 	sync
-	echo ", +" | sudo sfdisk -N 3 "$MEDIA"
-	sudo fsck.ext4 -fy "$ROOTPART"
-	sudo partprobe "$MEDIA"
-	sudo resize2fs "$ROOTPART"
+	echo ", +" | sfdisk -N 3 "$MEDIA"
+	fsck.ext4 -fy "$ROOTPART"
+	partprobe "$MEDIA"
+	resize2fs "$ROOTPART"
 fi
 
 # make temp mount points
 mkdir /tmp/{boot,root} &> /dev/null
-sudo mount "$BOOTPART" /tmp/boot &> /dev/null
-sudo mount "$ROOTPART" /tmp/root &> /dev/null
+mount "$BOOTPART" /tmp/boot &> /dev/null
+mount "$ROOTPART" /tmp/root &> /dev/null
 
 # turn off selinux
 if [ "$SELINUX" != "" ] ; then
 	if [ "$(echo ${SELINUX} | tr [:lower:] [:upper:])" = "OFF" ] ; then
       		echo "= Turning SELinux off ..."
-	        sudo sed -i 's/append/& enforcing=0/' /tmp/boot/extlinux/extlinux.conf
+	        sed -i 's/append/& enforcing=0/' /tmp/boot/extlinux/extlinux.conf
 # turn on selinux
 	elif [ "$(echo ${SELINUX} | tr [:lower:] [:upper:])" = "ON" ] ; then
     		echo "= Turning SELinux on ..."
-		sudo sed -i 's/ enforcing=0//' /tmp/boot/extlinux/extlinux.conf
+		sed -i 's/ enforcing=0//' /tmp/boot/extlinux/extlinux.conf
 	fi
 fi
 # Remove root password
 if [ "$NOROOTPASS" = "1" ] ; then
         	echo "= Removing the root password."
-	        sudo sed -i 's/root:x:/root::/' /tmp/root/etc/passwd
+	        sed -i 's/root:x:/root::/' /tmp/root/etc/passwd
 fi
 # determine uboot and write to disk 
 if [ "$TARGET" = "" ]; then
@@ -256,12 +256,12 @@ else
 	# Add console
         if [ "$CONSOLE" = "1" ] && [ "$SYSCON" != "" ] ; then
                 echo "= Adding console $SYSCON to extlinux.conf ..."
-                sudo sed -i "s|append|& console=$SYSCON|" /tmp/boot/extlinux/extlinux.conf
+                sed -i "s|append|& console=$SYSCON|" /tmp/boot/extlinux/extlinux.conf
         fi
 
 fi
 
-sudo umount $ROOTPART $BOOTPART &> /dev/null
+umount $ROOTPART $BOOTPART &> /dev/null
 
 echo ""
 echo "= Installation Complete! Insert into the "$TARGET" and boot."
