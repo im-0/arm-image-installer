@@ -11,7 +11,7 @@ usage() {
 Usage: $(basename ${0}) <options>
 
    --target=TARGET  - target board
-                      [${TARGETS}]
+   --list-targets   - list supported boards
    --media=DEVICE   - media device file (/dev/[sdX|mmcblkX])
    --tag=KOJI TAG   - koji tag to download build
 
@@ -51,6 +51,9 @@ while [ $# -gt 0 ]; do
                                 shift
                         fi
                         ;;
+                --list-targets)
+                        LISTTARGETS=1
+                        ;;
                 *)
                         echo "$(basename ${0}): Error - ${1}"
                         usage
@@ -66,8 +69,47 @@ else
         DIR=$(dirname $0)
         BOARDDIR="${DIR}/boards.d"
 fi
-TARGETS=$(ls -1 ${DIR}/${BOARDDIR})
-TARGETS=$(echo ${TARGETS} | sed -e 's/[[:space:]]/|/g')
+
+if [ ! -z "$LISTTARGETS" ]; then
+        cd $BOARDDIR
+        echo "Supported boards are:"
+        echo ""
+        echo "AllWinner SoC based:"
+        ALLWINNER=$(find . -type l -ls|grep AllWinner|cut -d"/" -f2|cut -d" " -f1|sort)
+        echo $ALLWINNER | sed -e 's/[[:space:]]/ /g' | fold -w 80 -s
+
+        echo ""
+        echo "i.Mx6 SoC based:"
+        MX6=$(find . -type l -ls|grep /imx6|cut -d"/" -f2|cut -d" " -f1|sort)
+        echo $MX6 | sed -e 's/[[:space:]]/ /g' | fold -w 80 -s
+
+        echo ""
+        echo "TI SoC based:"
+        OMAP=$(find . -type l -ls|grep /omap|cut -d"/" -f2|cut -d" " -f1|sort)
+        echo $OMAP | sed -e 's/[[:space:]]/ /g' | fold -w 80 -s
+
+        echo ""
+        echo "Marvell SoC based:"
+        MVEBU=$(find . -type l -ls|grep /mvebu|cut -d"/" -f2|cut -d" " -f1|sort)
+        echo $MVEBU | sed -e 's/[[:space:]]/ /g' | fold -w 80 -s
+
+        TARGETS=$(ls -1 ${BOARDDIR})
+        TARGETS=$(echo ${TARGETS} | sed -e 's/[[:space:]]/ /g')
+
+        for board in $TARGETS
+        do
+                if [[ none == $board || $ALLWINNER =~ $board || $MX6 =~ $board || $OMAP =~ $board || $MVEBU =~ $board ]]; then
+                        A=1
+                else
+                        OTHER="$OTHER $board"
+                fi
+        done
+        echo ""
+        echo "Other SoC based:"
+        echo $OTHER
+        exit 0
+fi
+
 
 # check if media exists
 if [[ ! -e $MEDIA ]] ; then
