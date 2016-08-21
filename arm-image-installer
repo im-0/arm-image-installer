@@ -118,25 +118,26 @@ contains() {
 }
 
 if [ ! -z "$LISTTARGETS" ]; then
+        cd $BOARDDIR
         echo "Supported boards are:"
         echo ""
         echo "AllWinner SoC based:"
-        ALLWINNER=$(find boards.d/ -type l -ls|grep AllWinner|cut -d" " -f32|cut -d"/" -f2|sort)
+        ALLWINNER=$(find . -type l -ls|grep AllWinner|cut -d"/" -f2|cut -d" " -f1|sort)
         echo $ALLWINNER | sed -e 's/[[:space:]]/ /g' | fold -w 80 -s
 
         echo ""
         echo "i.Mx6 SoC based:"
-        MX6=$(find boards.d/ -type l -ls|grep /imx6|cut -d" " -f32|cut -d"/" -f2|sort)
+        MX6=$(find . -type l -ls|grep /imx6|cut -d"/" -f2|cut -d" " -f1|sort)
         echo $MX6 | sed -e 's/[[:space:]]/ /g' | fold -w 80 -s
 
         echo ""
         echo "TI SoC based:"
-        OMAP=$(find boards.d/ -type l -ls|grep /omap|cut -d" " -f32|cut -d"/" -f2|sort)
+        OMAP=$(find . -type l -ls|grep /omap|cut -d"/" -f2|cut -d" " -f1|sort)
         echo $OMAP | sed -e 's/[[:space:]]/ /g' | fold -w 80 -s
 
         echo ""
         echo "Marvell SoC based:"
-        MVEBU=$(find boards.d/ -type l -ls|grep /mvebu|cut -d" " -f32|cut -d"/" -f2|sort)
+        MVEBU=$(find . -type l -ls|grep /mvebu|cut -d"/" -f2|cut -d" " -f1|sort)
         echo $MVEBU | sed -e 's/[[:space:]]/ /g' | fold -w 80 -s
 
         TARGETS=$(ls -1 ${BOARDDIR})
