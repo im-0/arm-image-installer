@@ -14,7 +14,6 @@ Usage: $(basename ${0}) <options>
 
    --image=IMAGE    - xz compressed image file name
    --target=TARGET  - target board
-   --list-targets   - list supported boards
    --media=DEVICE   - media device file (/dev/[sdX|mmcblkX])
    --selinux=ON/OFF - Turn SELinux off/on as needed
    --norootpass     - Remove the root password
@@ -23,7 +22,10 @@ Usage: $(basename ${0}) <options>
    --resizefs	    - Resize root filesystem to fill media device
    --addconsole     - Add system console to extlinux.conf
 
-Example: $(basename ${0}) --image=Fedora-Rawhide.xz --target=Bananapi --media=/dev/mmcblk0" --selinux=OFF 
+Example: $(basename ${0}) --image=Fedora-Rawhide.xz --target=Bananapi --media=/dev/mmcblk0 --selinux=OFF
+
+For list of supported boards please check SUPPORTED-BOARDS file.
+"
 }
 
 # Set some global variables for the command directory, target board directory,
@@ -87,9 +89,6 @@ while [ $# -gt 0 ]; do
                 --addconsole)
                         CONSOLE=1
                         ;;
-                --list-targets)
-                        LISTTARGETS=1
-                        ;;
                 --version)
                         echo "$(basename ${0})-"$VERSION""
                         exit 0
@@ -116,46 +115,6 @@ contains() {
         return 1    # $substring is not in $string
     fi
 }
-
-if [ ! -z "$LISTTARGETS" ]; then
-        cd $BOARDDIR
-        echo "Supported boards are:"
-        echo ""
-        echo "AllWinner SoC based:"
-        ALLWINNER=$(find . -type l -ls|grep AllWinner|cut -d"/" -f2|cut -d" " -f1|sort)
-        echo $ALLWINNER | sed -e 's/[[:space:]]/ /g' | fold -w 80 -s
-
-        echo ""
-        echo "i.Mx6 SoC based:"
-        MX6=$(find . -type l -ls|grep /imx6|cut -d"/" -f2|cut -d" " -f1|sort)
-        echo $MX6 | sed -e 's/[[:space:]]/ /g' | fold -w 80 -s
-
-        echo ""
-        echo "TI SoC based:"
-        OMAP=$(find . -type l -ls|grep /omap|cut -d"/" -f2|cut -d" " -f1|sort)
-        echo $OMAP | sed -e 's/[[:space:]]/ /g' | fold -w 80 -s
-
-        echo ""
-        echo "Marvell SoC based:"
-        MVEBU=$(find . -type l -ls|grep /mvebu|cut -d"/" -f2|cut -d" " -f1|sort)
-        echo $MVEBU | sed -e 's/[[:space:]]/ /g' | fold -w 80 -s
-
-        TARGETS=$(ls -1 ${BOARDDIR})
-        TARGETS=$(echo ${TARGETS} | sed -e 's/[[:space:]]/ /g')
-
-        for board in $TARGETS
-        do
-                if [[ none == $board || $ALLWINNER =~ $board || $MX6 =~ $board || $OMAP =~ $board || $MVEBU =~ $board ]]; then
-                        A=1
-                else
-                        OTHER="$OTHER $board"
-                fi
-        done
-        echo ""
-        echo "Other SoC based:"
-        echo $OTHER
-        exit 0
-fi
 
 # ensure sudo user
 if [ "$(whoami)" != "root" ] ; then
