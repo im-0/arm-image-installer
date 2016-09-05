@@ -1,0 +1,27 @@
+AllWinner ones:
+    A10-OLinuXino-Lime A10s-OLinuXino-M A13-OLinuXino A13-OLinuXinoM
+    A20-OLinuXino-Lime A20-OLinuXino-Lime2 A20-OLinuXino_MICRO
+    A20-Olimex-SOM-EVB Ampe_A76 Auxtek-T003 Auxtek-T004 Bananapi Bananapro CHIP
+    CSQ_CS908 Chuwi_V7_CW0825 Colombus Cubieboard Cubieboard2 Cubietruck
+    Cubietruck_plus Hummingbird_A31 Hyundai_A7HD Itead_Ibox_A20 Lamobo_R1
+    Linksprite_pcDuino Linksprite_pcDuino3 Linksprite_pcDuino3_Nano MK808C
+    MSI_Primo73 MSI_Primo81 Marsboard_A10 Mele_A1000 Mele_A1000G_quad Mele_I7
+    Mele_M3 Mele_M5 Mele_M9 Mini-X Orangepi Orangepi_mini Sinlinx_SinA31s
+    UTOO_P66 Wexler_TAB7200 Wits_Pro_A20_DKT Yones_Toptech_BS1078_V2
+    ba10_tv_box colorfly_e708_q1 difrnce_dit4350 dserve_dsrv9703c i12-tvbox
+    iNet_86VS icnova-a20-swac inet86dz jesurun_q5 mk802 mk802_a10s mk802ii
+    orangepi_2 orangepi_lite orangepi_pc orangepi_plus polaroid_mid2809pxe04
+    pov_protab2_ips9 q8_a13_tablet q8_a23_tablet_800x480 q8_a33_tablet_1024x600
+    q8_a33_tablet_800x480 r7-tv-dongle sunxi_Gemei_G9
+
+MX6 ones:
+    cm_fx6 mx6cuboxi novena riotboard wandboard
+
+OMAP ones:
+    am335x_boneblack am57xx_evm kc1 omap3_beagle omap4_panda omap5_uevm
+
+MVEBU ones:
+    clearfog
+
+Other ones:
+    jetson-tk1 trimslice
