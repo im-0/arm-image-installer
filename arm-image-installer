@@ -152,18 +152,6 @@ if [ ! -e "$MEDIA" ] ; then
         exit 1
 fi
 
-# check media type /dev/sdX or /dev/mmcblkX or loop device
-case $MEDIA in
-        "/dev/mmcblk"*)
-                BOOTPART="${MEDIA}p1"
-                ROOTPART="${MEDIA}p3"
-                ;;
-        *)
-                BOOTPART="${MEDIA}1"
-                ROOTPART="${MEDIA}3"
-                ;;
-esac
-
 clear
 # Last chance to back out
 echo " "
@@ -225,6 +213,28 @@ if [ "$IMAGE" != "" ] ; then
         # read the new partition table
         partprobe "$MEDIA"
 fi
+# check to see how many partitions on the image
+partprobe "$MEDIA"
+case $MEDIA in
+        "/dev/mmcblk"*)
+                if [ -e "$MEDIA"p4 ]; then
+                        BOOTPART="${MEDIA}p2"
+                        ROOTPART="${MEDIA}p4"
+                else
+                        BOOTPART="${MEDIA}p1"
+                        ROOTPART="${MEDIA}p3"
+                fi
+                ;;
+        *)
+                if [ -e "$MEDIA"4 ]; then
+                        BOOTPART="${MEDIA}2"
+                        ROOTPART="${MEDIA}4"
+                else
+                        BOOTPART="${MEDIA}1"
+                        ROOTPART="${MEDIA}3"
+                fi
+                ;;
+esac
 
 # resize root filesystem before mounting
 if [ "$RESIZEFS" != "" ] ; then
