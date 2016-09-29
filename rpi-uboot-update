@@ -1,0 +1,22 @@
+#!/bin/bash
+
+echo
+echo "= This will update U-Boot and the "
+echo "= Raspberry Pi Firmware to the latest."
+UBOOT=$(rpm -q uboot-images-armv7)
+FW=$(rpm -q bcm283x-firmware)
+echo
+echo "= Uboot: $UBOOT"
+echo "= Firmware: $FW"
+mount /dev/mmcblk0p1 /boot/fw
+# copy uboot
+cp -rp /usr/share/uboot/rpi_2/u-boot.bin /boot/fw/rpi2-u-boot.bin
+cp -rp /usr/share/uboot/rpi_3_32b/u-boot.bin /boot/fw/rpi3-u-boot.bin
+
+# copy fw
+cp -rfp /usr/share/bcm283x-firmware/* /boot/fw/
+umount /boot/fw
+echo 
+echo "== Complete!"
+echo
+
