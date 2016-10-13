@@ -21,6 +21,7 @@ Usage: $(basename ${0}) <options>
    --version	    - Display version and exit
    --resizefs	    - Resize root filesystem to fill media device
    --addconsole     - Add system console to extlinux.conf
+   --addkey=        - Username for SSH public key
 
 Example: $(basename ${0}) --image=Fedora-Rawhide.xz --target=Bananapi --media=/dev/mmcblk0
 
@@ -69,6 +70,14 @@ while [ $# -gt 0 ]; do
                                 MEDIA=$(echo $1 | sed 's/^--media=//')
                         else
                                 MEDIA=$2
+                                shift
+                        fi
+                        ;;
+                --addkey*)
+                        if echo $1 | grep '=' >/dev/null ; then
+                                SSH_KEY=$(echo $1 | sed 's/^--addkey=//')
+                        else
+                                SSH_KEY=$2
                                 shift
                         fi
                         ;;
@@ -182,6 +191,10 @@ fi
 if [ "$CONSOLE" != "" ] ; then
         echo "= Console for $TARGET will be added."
 fi
+# User ssh key
+if [ "$SSH_KEY" != "" ] ; then
+        echo "= SSH Public Key for $SSH_KEY will be added."
+fi
 echo "====================================================="
 echo " "
 echo "*****************************************************"
@@ -276,6 +289,19 @@ if [ "$NOROOTPASS" = "1" ] ; then
         echo "= Removing the root password."
         sed -i 's/root:x:/root::/' /tmp/root/etc/passwd
 fi
+# Add ssh key to the image
+if [ "$SSH_KEY" != "" ] ; then
+        if [ -f /home/$SSH_KEY/.ssh/id_rsa.pub ]; then
+                echo "= Adding SSH key to authorized keys."
+                mkdir /tmp/root/root/.ssh/ &> /dev/null
+                cat /home/$SSH_KEY/.ssh/id_rsa.pub >> /tmp/root/root/.ssh/authorized_keys
+                chmod -R u=rwX,o=,g= /tmp/root/root/.ssh/
+        else
+                echo "= SSH key for $SSH_KEY : Not Found!"
+                echo "= WARNING: No SSH Key Added."
+        fi
+        
+fi
 # determine uboot and write to disk 
 if [ "$TARGET" = "" ]; then
         echo "= No U-boot will be written."
@@ -291,10 +317,10 @@ else
 
 fi
 
+sync 
+
 umount $ROOTPART $BOOTPART &> /dev/null
 
 echo ""
 echo "= Installation Complete! Insert into the "$TARGET" and boot."
 exit 0
-
-# vi: tabstop=8 softtabstop=0 expandtab shiftwidth=8 smarttab
