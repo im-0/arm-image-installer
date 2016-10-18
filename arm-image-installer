@@ -21,7 +21,7 @@ Usage: $(basename ${0}) <options>
    --version	    - Display version and exit
    --resizefs	    - Resize root filesystem to fill media device
    --addconsole     - Add system console to extlinux.conf
-   --addkey=        - Username for SSH public key
+   --addkey=        - /path/to/ssh-public-key
 
 Example: $(basename ${0}) --image=Fedora-Rawhide.xz --target=Bananapi --media=/dev/mmcblk0
 
@@ -193,7 +193,7 @@ if [ "$CONSOLE" != "" ] ; then
 fi
 # User ssh key
 if [ "$SSH_KEY" != "" ] ; then
-        echo "= SSH Public Key for $SSH_KEY will be added."
+        echo "= SSH Public Key $SSH_KEY will be added."
 fi
 echo "====================================================="
 echo " "
@@ -291,13 +291,13 @@ if [ "$NOROOTPASS" = "1" ] ; then
 fi
 # Add ssh key to the image
 if [ "$SSH_KEY" != "" ] ; then
-        if [ -f /home/$SSH_KEY/.ssh/id_rsa.pub ]; then
+        if [ -f $SSH_KEY ]; then
                 echo "= Adding SSH key to authorized keys."
                 mkdir /tmp/root/root/.ssh/ &> /dev/null
-                cat /home/$SSH_KEY/.ssh/id_rsa.pub >> /tmp/root/root/.ssh/authorized_keys
+                cat $SSH_KEY >> /tmp/root/root/.ssh/authorized_keys
                 chmod -R u=rwX,o=,g= /tmp/root/root/.ssh/
         else
-                echo "= SSH key for $SSH_KEY : Not Found!"
+                echo "= SSH key $SSH_KEY : Not Found!"
                 echo "= WARNING: No SSH Key Added."
         fi
         
