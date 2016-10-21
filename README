@@ -30,22 +30,6 @@ Usage: arm-image-installer <options>
 
 Example: arm-image-installer --image=Fedora-Rawhide.xz --target=panda --media=/dev/mmcblk0 --selinux=OFF
 
-
-create-install-media
---------------------
-
-Create network installation media for supported ARM devices. This script will format specified media, rsync the 
-pxeimages directory from the Fedora 22 Alpha release and create a custom 'extlinux.conf' for a network installation.
-Requires U-Boot be written to mSD/SD on target platform. Tested on USB with Cubietruck and Banana Pi. 
-
-Usage: create-install-media <options>
-
-   --media=DEVICE   - media device file (/dev/[sdX|mmcblkX])
-   --url=URL	    - Optional URL, Mastermirror used as default
-
-Example: create-install-media --media=/dev/mmcblk0
-
-
 update-uboot
 ------------
 
