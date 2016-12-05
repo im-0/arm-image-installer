@@ -323,7 +323,6 @@ fi
 # fix up rpi2/3
 if [ "$FIX_RPI" != "" ] ; then
 	echo "= Blacklisting the VC4 Driver for the Raspberry Pi 2/3"
-#       touch /tmp/root/etc/modprobe.d/blacklist-vc4.conf
 	echo blacklist vc4 > /tmp/root/etc/modprobe.d/blacklist-vc4.conf
 	sed -i 's/append/& rd.driver.blacklist=vc4/' /tmp/boot/extlinux/extlinux.conf
 fi
