@@ -15,7 +15,6 @@ Usage: $(basename ${0}) <options>
    --image=IMAGE    - xz compressed image file name
    --target=TARGET  - target board
    --media=DEVICE   - media device file (/dev/[sdX|mmcblkX])
-   --selinux=ON/OFF - Turn SELinux off/on as needed
    --norootpass     - Remove the root password
    -y		    - Assumes yes, will not wait for confirmation
    --version	    - Display version and exit
