@@ -31,17 +31,17 @@ for entry in sorted(os.listdir('.')):
                 other += "%s " % entry
 
 
-print("AllWinner ones:")
+print("AllWinner Devices:")
 printboards(allwinner)
 
-print("MX6 ones:")
+print("MX6 Devices:")
 printboards(mx6)
 
-print("OMAP ones:")
+print("OMAP Devices:")
 printboards(omap)
 
-print("MVEBU ones:")
+print("MVEBU Devices:")
 printboards(mvebu)
 
-print("Other ones:")
+print("Other Devices:")
 printboards(other)

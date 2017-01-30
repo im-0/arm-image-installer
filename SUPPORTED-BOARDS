@@ -1,4 +1,4 @@
-AllWinner ones:
+AllWinner Devices:
 A10-OLinuXino-Lime A10s-OLinuXino-M A13-OLinuXino A13-OLinuXinoM 
  A20-OLinuXino-Lime A20-OLinuXino-Lime2 A20-OLinuXino_MICRO 
  A20-Olimex-SOM-EVB Ampe_A76 Auxtek-T003 Auxtek-T004 Bananapi Bananapro CHIP 
@@ -14,15 +14,15 @@ A10-OLinuXino-Lime A10s-OLinuXino-M A13-OLinuXino A13-OLinuXinoM
  pov_protab2_ips9 q8_a13_tablet q8_a23_tablet_800x480 q8_a33_tablet_1024x600 
  q8_a33_tablet_800x480 r7-tv-dongle sunxi_Gemei_G9 
 
-MX6 ones:
+MX6 Devices:
 cm_fx6 mx6cuboxi novena riotboard wandboard 
 
-OMAP ones:
+OMAP Devices:
 am335x_boneblack am57xx_evm kc1 omap3_beagle omap4_panda omap5_uevm 
 
-MVEBU ones:
+MVEBU Devices:
 clearfog 
 
-Other ones:
+Other Devices:
 jetson-tk1 rpi2 rpi3 trimslice 
 
