@@ -22,6 +22,7 @@ Usage: $(basename ${0}) <options>
    --addconsole     - Add system console to extlinux.conf
    --addkey=        - /path/to/ssh-public-key
    --blacklistvc4   - Blacklist the VC4 driver for Rpi2/3 (BZ#1387733)
+   --supported-boards 
 
 Example: $(basename ${0}) --image=Fedora-Rawhide.xz --target=Bananapi --media=/dev/mmcblk0
 
@@ -100,6 +101,10 @@ while [ $# -gt 0 ]; do
 			;;
 		--blacklistvc4)
 			FIX_RPI=1	
+                        ;;
+		--supported-boards)
+                        cat $DOC_DIR/SUPPORTED-BOARDS
+                        exit 0
                         ;;
                 --version)
                         echo "$(basename ${0})-"$VERSION""
