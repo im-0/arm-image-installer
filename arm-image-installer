@@ -265,15 +265,33 @@ esac
 if [ "$RESIZEFS" != "" ] ; then
         echo "= Resizing $MEDIA ...."
         sync
+	count=0
         echo ", +" | sfdisk -N "$PARTNUM" "$MEDIA"
         while [ $? != '0' ]; do
                 sleep 5
                 echo ", +" | sfdisk -N "$PARTNUM" "$MEDIA"
+		count=$((count+1))
+		if [ $count -gt 5 ]
+			then
+				echo "= Partition Resize Failed."
+		        	continue
+		fi
+			
         done
         
-        fsck.ext4 -fy "$ROOTPART"
         partprobe "$MEDIA"
-        resize2fs "$ROOTPART"
+
+	FS_TYPE=$(file -s "$ROOTPART" | awk '{print $3}')
+		if [ "$FS_TYPE" = "XFS" ]; then
+			mkdir /tmp/root &> /dev/null
+			mount "$ROOTPART" /tmp/root &> /dev/null
+			fsck.xfs -fy "$ROOTPART"
+			xfs_growfs "$ROOTPART"
+			umount "$ROOTPART"
+		else
+			fsck.ext4 -fy "$ROOTPART"
+        		resize2fs "$ROOTPART"
+		fi
 fi
 
 # make temp mount points
