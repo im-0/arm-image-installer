@@ -20,7 +20,7 @@ cp -rp /usr/share/uboot/rpi_2/u-boot.bin /boot/fw/rpi2-u-boot.bin
 cp -rp /usr/share/uboot/rpi_3_32b/u-boot.bin /boot/fw/rpi3-u-boot.bin
 
 # copy fw
-cp -rfp /usr/share/bcm283x-firmware/* /boot/fw/
+cp -rfp /usr/share/bcm283x-firmware/*.{bin,dat,elf} /boot/fw/
 umount /boot/fw
 echo 
 echo "== Complete!"
