@@ -18,13 +18,13 @@ other = ""
 for entry in sorted(os.listdir('.')):
 
     if os.path.islink(entry):
-        if 'AllWinner' in os.path.realpath(entry):
+        if 'AllWinner' == os.path.basename(os.path.realpath(entry)):
             allwinner += "%s " % entry
-        elif 'omap' in os.path.realpath(entry):
+        elif 'omap' == os.path.basename(os.path.realpath(entry)):
             omap += "%s " % entry
-        elif 'imx6' in os.path.realpath(entry):
+        elif 'imx6' == os.path.basename(os.path.realpath(entry)):
             mx6 += "%s " % entry
-        elif 'mvebu' in os.path.realpath(entry):
+        elif 'mvebu' == os.path.basename(os.path.realpath(entry)):
             mvebu += "%s " % entry
         else:
             if entry != 'none':
