@@ -350,10 +350,10 @@ if [ "$FIX_RPI" != "" ] ; then
 	sed -i 's/append/& rd.driver.blacklist=vc4/' /tmp/boot/extlinux/extlinux.conf
 fi
 
-
 sync 
 
 umount $ROOTPART $BOOTPART &> /dev/null
+rmdir  /tmp/root /tmp/boot &> /dev/null
 
 echo ""
 echo "= Installation Complete! Insert into the "$TARGET" and boot."
