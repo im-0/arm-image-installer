@@ -13,6 +13,7 @@ allwinner = ""
 mx6 = ""
 omap = ""
 mvebu = ""
+st = ""
 other = ""
 
 for entry in sorted(os.listdir('.')):
@@ -26,6 +27,8 @@ for entry in sorted(os.listdir('.')):
             mx6 += "%s " % entry
         elif 'mvebu' == os.path.basename(os.path.realpath(entry)):
             mvebu += "%s " % entry
+        elif 'st' == os.path.basename(os.path.realpath(entry)):
+            st += "%s " % entry
         else:
             if entry != 'none':
                 other += "%s " % entry
@@ -42,6 +45,9 @@ printboards(omap)
 
 print("MVEBU Devices:")
 printboards(mvebu)
+
+print("ST Devices:")
+printboards(st)
 
 print("Other Devices:")
 printboards(other)
