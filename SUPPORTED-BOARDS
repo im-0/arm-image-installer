@@ -23,6 +23,9 @@ am335x_boneblack am57xx_evm kc1 omap3_beagle omap4_panda omap5_uevm
 MVEBU Devices:
 clearfog 
 
+ST Devices:
+stih410-b2260
+
 Other Devices:
 jetson-tk1 rpi2 rpi3 trimslice 
 
