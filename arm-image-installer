@@ -238,6 +238,7 @@ partprobe "$MEDIA"
 case $MEDIA in
         "/dev/mmcblk"*)
                 if [ -e "$MEDIA"p4 ]; then
+                        export FIRMPART="${MEDIA}p1"
                         BOOTPART="${MEDIA}p2"
                         ROOTPART="${MEDIA}p4"
                         PARTNUM=4
@@ -249,6 +250,7 @@ case $MEDIA in
                 ;;
         *)
                 if [ -e "$MEDIA"4 ]; then
+                        export FIRMPART="${MEDIA}1"
                         BOOTPART="${MEDIA}2"
                         ROOTPART="${MEDIA}4"
                         PARTNUM=4
