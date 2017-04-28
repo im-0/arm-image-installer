@@ -36,6 +36,8 @@ hpen kick hpen
 go \$uboot_addr
 EOF
 
+cp /tmp/root/usr/share/uboot/stih410-b2260/u-boot.bin /tmp/firmware/b2260-u-boot.bin
+
 sync
 umount $FIRMPART &> /dev/null
 SYSCON=ttyAS1,115200
