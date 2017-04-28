@@ -235,6 +235,7 @@ if [ "$IMAGE" != "" ] ; then
 fi
 # check to see how many partitions on the image
 partprobe "$MEDIA"
+sleep 1
 case $MEDIA in
         "/dev/mmcblk"*)
                 if [ -e "$MEDIA"p4 ]; then
