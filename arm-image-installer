@@ -102,7 +102,7 @@ while [ $# -gt 0 ]; do
 			FIX_RPI=1	
                         ;;
 		--supported-boards)
-                        cat $DOC_DIR/SUPPORTED-BOARDS
+                        cat $BOARDDIR/SUPPORTED-BOARDS
                         exit 0
                         ;;
                 --version)
