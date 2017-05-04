@@ -34,9 +34,11 @@ For list of supported boards please check SUPPORTED-BOARDS file.
 DIR=$(dirname $0)
 if [ -d "/usr/share/arm-image-installer/boards.d" ]; then
         BOARDDIR="/usr/share/arm-image-installer/boards.d"
+	DOC_DIR="/usr/share/doc/fedora-arm-installer/"
 else
         DIR=$(dirname $0)
         BOARDDIR="${DIR}/boards.d"
+	DOC_DIR="${DIR}/"
 fi
 
 # check the args
@@ -102,7 +104,7 @@ while [ $# -gt 0 ]; do
 			FIX_RPI=1	
                         ;;
 		--supported-boards)
-                        cat $BOARDDIR/SUPPORTED-BOARDS
+                        cat $DOC_DIR/SUPPORTED-BOARDS
                         exit 0
                         ;;
                 --version)
