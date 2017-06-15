@@ -103,7 +103,10 @@ if [[ $KOJI_TAG != '' ]] ; then
                         koji download-build --arch=noarch --latestfrom=$KOJI_TAG uboot-tools
                 fi
                 # unpack uboot
-                rpm2cpio uboot-images*.rpm | cpio -idv &> /dev/null
+                for rpm in uboot-images*.rpm
+                do
+                        rpm2cpio "${rpm}" | cpio -idv &> /dev/null
+                done
                 popd &> /dev/null
         fi
 fi
