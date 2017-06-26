@@ -301,7 +301,16 @@ fi
 # make temp mount points
 mkdir /tmp/{boot,root} &> /dev/null
 mount "$BOOTPART" /tmp/boot &> /dev/null
+if [ $? -ne 0 ]; then
+        echo "Error: mount $BOOTPART /tmp/boot failed"
+        exit 1
+fi
+
 mount "$ROOTPART" /tmp/root &> /dev/null
+if [ $? -ne 0 ]; then
+        echo "Error: mount $ROOTPART /tmp/root failed"
+        exit 1
+fi
 
 # turn off selinux
 if [ "$SELINUX" != "" ] ; then
