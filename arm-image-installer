@@ -370,7 +370,7 @@ fi
 sync 
 
 umount $ROOTPART $BOOTPART $FIRMPART &> /dev/null
-rmdir  /tmp/root /tmp/boot $FIRMPART &> /dev/null
+rmdir  /tmp/root /tmp/boot /tmp/fw &> /dev/null
 
 echo ""
 echo "= Installation Complete! Insert into the "$TARGET" and boot."
