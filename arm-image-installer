@@ -352,6 +352,11 @@ else
         if [ "$CONSOLE" = "1" ] && [ "$SYSCON" != "" ] ; then
                 echo "= Adding console $SYSCON to extlinux.conf ..."
                 sed -i "s|append|& console=$SYSCON|" /tmp/boot/extlinux/extlinux.conf
+		if [ "$TARGET" = "rpi2" ] || [ "$TARGET" = "rpi3" ]; then
+                        mkdir /tmp/fw &> /dev/null
+                        mount "$FIRMPART" /tmp/fw &> /dev/null
+                        sed -i "s|# enable_uart=1|enable_uart=1|" /tmp/fw/config.txt
+                fi
         fi
 
 fi
@@ -364,8 +369,8 @@ fi
 
 sync 
 
-umount $ROOTPART $BOOTPART &> /dev/null
-rmdir  /tmp/root /tmp/boot &> /dev/null
+umount $ROOTPART $BOOTPART $FIRMPART &> /dev/null
+rmdir  /tmp/root /tmp/boot $FIRMPART &> /dev/null
 
 echo ""
 echo "= Installation Complete! Insert into the "$TARGET" and boot."

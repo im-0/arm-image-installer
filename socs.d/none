@@ -1,1 +1,2 @@
 echo "= No U-Boot will be installed."
+SYSCON="ttyS0,15200n8"
