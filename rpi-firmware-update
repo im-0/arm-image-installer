@@ -32,7 +32,11 @@ if [ -f /usr/share/uboot/rpi_3_32b/u-boot.bin ]; then
         echo "Missing U-Boot for Raspberry Pi 3, no file copied."
 fi
 # copy fw
-cp -rfp /usr/share/bcm283x-firmware/*.{bin,dat,elf} /boot/fw/
+if [ -d /usr/share/bcm283x-firmware ]; then
+        cp -rfp /usr/share/bcm283x-firmware/*.{bin,dat,elf} /boot/fw/
+else
+        echo "Missing bcm283x-firmware, no files copied."
+fi
 umount /boot/fw
 echo 
 echo "== Complete!"
