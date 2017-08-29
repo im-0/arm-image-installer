@@ -13,8 +13,7 @@ UBOOT=$(rpm -q uboot-images-armv7)
 if [ "$UBOOT" = "package uboot-images-armv7 is not installed" ]; then
         echo
         echo "$UBOOT"
-        read -p "Would you like to install uboot-images-armv7 (yes or no)? " INSS
-TALL_UBOOT
+        read -p "Would you like to install uboot-images-armv7 (yes or no)? " INSTALL_UBOOT
         if [ "$(echo ${INSTALL_UBOOT} | tr [:lower:] [:upper:])" = "YES" ] ; thee
 n
         dnf install -y uboot-images-armv7
@@ -25,8 +24,7 @@ FW=$(rpm -q bcm283x-firmware)
 if [ "$FW" = "package bcm283x-firmware is not installed" ]; then
         echo
         echo "$FW"
-        read -p "Would you like to install bcm283x-firmware (yes or no)? " INSTAA
-LL_FW
+        read -p "Would you like to install bcm283x-firmware (yes or no)? " INSTALL_FW
         if [ "$(echo ${INSTALL_FW} | tr [:lower:] [:upper:])" = "YES" ] ; then
                 dnf install -y bcm283x-firmware
                 FW=$(rpm -q bcm283x-firmware)
