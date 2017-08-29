@@ -14,7 +14,12 @@ FW=$(rpm -q bcm283x-firmware)
 echo
 echo "= Uboot: $UBOOT"
 echo "= Firmware: $FW"
-mount /dev/mmcblk0p1 /boot/fw
+if [ -d /boot/fw ]; then
+        	mount /dev/mmcblk0p1 /boot/fw
+        else
+        	mkdir /boot/fw
+        	mount /dev/mmcblk0p1 /boot/fw
+fi
 # copy uboot
 cp -rp /usr/share/uboot/rpi_2/u-boot.bin /boot/fw/rpi2-u-boot.bin
 cp -rp /usr/share/uboot/rpi_3_32b/u-boot.bin /boot/fw/rpi3-u-boot.bin
