@@ -22,6 +22,16 @@ n
         fi
 fi
 FW=$(rpm -q bcm283x-firmware)
+if [ "$FW" = "package bcm283x-firmware is not installed" ]; then
+        echo
+        echo "$FW"
+        read -p "Would you like to install bcm283x-firmware (yes or no)? " INSTAA
+LL_FW
+        if [ "$(echo ${INSTALL_FW} | tr [:lower:] [:upper:])" = "YES" ] ; then
+                dnf install -y bcm283x-firmware
+                FW=$(rpm -q bcm283x-firmware)
+        fi
+fi
 echo
 echo "= Uboot: $UBOOT"
 echo "= Firmware: $FW"
