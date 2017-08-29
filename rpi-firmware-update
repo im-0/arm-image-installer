@@ -30,6 +30,11 @@ if [ "$FW" = "package bcm283x-firmware is not installed" ]; then
                 FW=$(rpm -q bcm283x-firmware)
         fi
 fi
+if [ "$FW" = "package bcm283x-firmware is not installed" ] && [ "$UBOOT" = "package uboot-images-armv7 is not installed" ]; then
+        echo
+        echo "Nothing to update, exiting."
+        exit 0
+fi
 echo
 echo "= Uboot: $UBOOT"
 echo "= Firmware: $FW"
