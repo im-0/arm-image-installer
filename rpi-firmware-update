@@ -10,6 +10,17 @@ echo
 echo "= This will update U-Boot and the "
 echo "= Raspberry Pi Firmware to the latest."
 UBOOT=$(rpm -q uboot-images-armv7)
+if [ "$UBOOT" = "package uboot-images-armv7 is not installed" ]; then
+        echo
+        echo "$UBOOT"
+        read -p "Would you like to install uboot-images-armv7 (yes or no)? " INSS
+TALL_UBOOT
+        if [ "$(echo ${INSTALL_UBOOT} | tr [:lower:] [:upper:])" = "YES" ] ; thee
+n
+        dnf install -y uboot-images-armv7
+        UBOOT=$(rpm -q uboot-images-armv7)
+        fi
+fi
 FW=$(rpm -q bcm283x-firmware)
 echo
 echo "= Uboot: $UBOOT"
