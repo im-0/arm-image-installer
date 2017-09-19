@@ -290,7 +290,7 @@ if [ "$RESIZEFS" != "" ] ; then
 			mkdir /tmp/root &> /dev/null
 			mount "$ROOTPART" /tmp/root &> /dev/null
 			fsck.xfs -fy "$ROOTPART"
-			xfs_growfs "$ROOTPART"
+			xfs_growfs /tmp/root
 			umount "$ROOTPART"
 		else
 			fsck.ext4 -fy "$ROOTPART"
