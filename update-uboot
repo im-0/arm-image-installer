@@ -69,24 +69,24 @@ else
 	BOARDDIR="${DIR}/boards.d"
 fi
 # ensure sudo user
-if [ "$(whoami)" != "root" ] ; then
+if [ "$(whoami)" != "root" ]; then
 	echo "Error: This script requires 'sudo' privileges in order to write to disk & mount media."
 	exit 1
 fi
 
 # check if media exists
-if [[ ! -e $MEDIA ]] ; then
+if [[ ! -e $MEDIA ]]; then
 	echo "Missing media"
 	usage
 	exit 1
 fi
 
-if [[ $TARGET = '' ]] ; then
+if [[ $TARGET = '' ]]; then
 	echo "Missing target"
 	usage
 	exit 1
 fi
-if [[ $KOJI_TAG != '' ]] ; then
+if [[ $KOJI_TAG != '' ]]; then
 	if [[ ! -f /usr/bin/koji ]]; then
 		echo "Please install koji-utils for this option."
 		exit 1

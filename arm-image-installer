@@ -134,13 +134,13 @@ contains() {
 }
 
 # ensure sudo user
-if [ "$(whoami)" != "root" ] ; then
+if [ "$(whoami)" != "root" ]; then
 	echo "Error: This script requires 'sudo' privileges in order to write to disk & mount media."
 	exit 1
 fi
 
 # check to make sure populated
-if [ "$MEDIA" = "" ] ; then
+if [ "$MEDIA" = "" ]; then
 	usage
 	exit 1
 fi
@@ -151,20 +151,20 @@ if [ "$TARGET" = "cubietruck" ]; then
 fi
 
 # check for boards
-if [ "$TARGET" != "" -a ! -e "${BOARDDIR}/${TARGET}" ] ; then
+if [ "$TARGET" != "" -a ! -e "${BOARDDIR}/${TARGET}" ]; then
 	echo "Error: You must choose a supported board or none at all." 
 	usage
 	exit 1
 fi
 
 # image exists
-if [ ! -f "$IMAGE" ] && [ "$IMAGE" != "" ] ; then
+if [ ! -f "$IMAGE" ] && [ "$IMAGE" != "" ]; then
 	echo "Error: $IMAGE not found! Please choose an existing image."
 	exit 1
 fi
 
 # device exists
-if [ ! -e "$MEDIA" ] ; then
+if [ ! -e "$MEDIA" ]; then
 	echo "Error: $MEDIA not found! Please choose an existing device."
 	exit 1
 fi
@@ -174,33 +174,33 @@ clear
 echo ""
 echo "====================================================="
 # Image if included
-if [ "$IMAGE" != "" ] ; then
+if [ "$IMAGE" != "" ]; then
 	echo "= Selected Image:                                 "
 	echo "= $IMAGE"
 fi
 echo "= Selected Media : $MEDIA"
 # target hardware platform
-if [ "$TARGET" != "" ] ; then 
+if [ "$TARGET" != "" ]; then 
 	echo "= U-Boot Target : $TARGET"
 fi
 # SE Linux On/Off
-if [ "$SELINUX" != "" ] ; then
+if [ "$SELINUX" != "" ]; then
 	echo "= SELINUX = $SELINUX"
 fi
 # Remove root password
-if [ "$NOROOTPASS" != "" ] ; then
+if [ "$NOROOTPASS" != "" ]; then
 	echo "= Root Password will be removed."
 fi
 # Resize root filesystem to fill media device
-if [ "$RESIZEFS" != "" ] ; then
+if [ "$RESIZEFS" != "" ]; then
 	echo "= Root partition will be resized"
 fi
 # Console to be added
-if [ "$CONSOLE" != "" ] ; then
+if [ "$CONSOLE" != "" ]; then
 	echo "= Console for $TARGET will be added."
 fi
 # User ssh key
-if [ "$SSH_KEY" != "" ] ; then
+if [ "$SSH_KEY" != "" ]; then
 	echo "= SSH Public Key $SSH_KEY will be added."
 fi
 echo "====================================================="
@@ -210,13 +210,13 @@ echo "*****************************************************"
 echo "******** WARNING! ALL DATA WILL BE DESTROYED ********"
 echo "*****************************************************"
 echo "*****************************************************"
-if [ "$NOASK" != 1 ] ; then 
+if [ "$NOASK" != 1 ]; then 
 	echo " "
 	echo " Type 'YES' to proceed, anything else to exit now "
 	echo " "
 	# wait for agreement
 	read -p "= Proceed? " PROCEED
-	if [ "$(echo ${PROCEED} | tr [:lower:] [:upper:])" != "YES" ] ; then
+	if [ "$(echo ${PROCEED} | tr [:lower:] [:upper:])" != "YES" ]; then
 		echo "User exit, no image written."
 		exit 0
 	fi
@@ -225,7 +225,7 @@ fi
 umount $MEDIA* &> /dev/null
 
 # Write the disk image to media
-if [ "$IMAGE" != "" ] ; then
+if [ "$IMAGE" != "" ]; then
 	echo "= Writing: "
 	echo "= $IMAGE "
 	echo "= To: $MEDIA ...."
@@ -265,7 +265,7 @@ case $MEDIA in
 esac
 
 # resize root filesystem before mounting
-if [ "$RESIZEFS" != "" ] ; then
+if [ "$RESIZEFS" != "" ]; then
 	echo "= Resizing $MEDIA ...."
 	sync
 	count=0
@@ -310,23 +310,23 @@ if [ $? -ne 0 ]; then
 fi
 
 # turn off selinux
-if [ "$SELINUX" != "" ] ; then
-	if [ "$(echo ${SELINUX} | tr [:lower:] [:upper:])" = "OFF" ] ; then
+if [ "$SELINUX" != "" ]; then
+	if [ "$(echo ${SELINUX} | tr [:lower:] [:upper:])" = "OFF" ]; then
 		echo "= Turning SELinux off ..."
 		sed -i 's/append/& enforcing=0/' /tmp/boot/extlinux/extlinux.conf
 		# turn on selinux
-	elif [ "$(echo ${SELINUX} | tr [:lower:] [:upper:])" = "ON" ] ; then
+	elif [ "$(echo ${SELINUX} | tr [:lower:] [:upper:])" = "ON" ]; then
 		echo "= Turning SELinux on ..."
 		sed -i 's/ enforcing=0//' /tmp/boot/extlinux/extlinux.conf
 	fi
 fi
 # Remove root password
-if [ "$NOROOTPASS" = "1" ] ; then
+if [ "$NOROOTPASS" = "1" ]; then
 	echo "= Removing the root password."
 	sed -i 's/root:x:/root::/' /tmp/root/etc/passwd
 fi
 # Add ssh key to the image
-if [ "$SSH_KEY" != "" ] ; then
+if [ "$SSH_KEY" != "" ]; then
 	if [ -f $SSH_KEY ]; then
 		echo "= Adding SSH key to authorized keys."
 		mkdir /tmp/root/root/.ssh/ &> /dev/null
@@ -346,7 +346,7 @@ else
 	PREFIX=/tmp/root
 	. "${BOARDDIR}/${TARGET}"
 	# Add console
-	if [ "$CONSOLE" = "1" ] && [ "$SYSCON" != "" ] ; then
+	if [ "$CONSOLE" = "1" ] && [ "$SYSCON" != "" ]; then
 		echo "= Adding console $SYSCON to extlinux.conf ..."
 		sed -i "s|append|& console=$SYSCON|" /tmp/boot/extlinux/extlinux.conf
 		if [ "$TARGET" = "rpi2" ] || [ "$TARGET" = "rpi3" ]; then
@@ -358,7 +358,7 @@ else
 
 fi
 # fix up rpi2/3
-if [ "$FIX_RPI" != "" ] ; then
+if [ "$FIX_RPI" != "" ]; then
 	echo "= Blacklisting the VC4 Driver for the Raspberry Pi 2/3"
 	echo blacklist vc4 > /tmp/root/etc/modprobe.d/blacklist-vc4.conf
 	sed -i 's/append/& rd.driver.blacklist=vc4/' /tmp/boot/extlinux/extlinux.conf
