@@ -124,14 +124,13 @@ while [ $# -gt 0 ]; do
 done
 
 contains() {
-    string="$1"
-    substring="$2"
-    if test "${string#*$substring}" != "$string"
-    then
-	return 0    # $substring is in $string
-    else
-	return 1    # $substring is not in $string
-    fi
+	string="$1"
+	substring="$2"
+	if test "${string#*$substring}" != "$string"; then
+		return 0    # $substring is in $string
+	else
+		return 1    # $substring is not in $string
+	fi
 }
 
 # ensure sudo user
@@ -172,7 +171,7 @@ fi
 
 clear
 # Last chance to back out
-echo " "
+echo ""
 echo "====================================================="
 # Image if included
 if [ "$IMAGE" != "" ] ; then
@@ -275,14 +274,12 @@ if [ "$RESIZEFS" != "" ] ; then
 		sleep 5
 		echo ", +" | sfdisk -N "$PARTNUM" "$MEDIA"
 		count=$((count+1))
-		if [ $count -gt 5 ]
-			then
-				echo "= Partition Resize Failed."
-				continue
+		if [ $count -gt 5 ]; then
+			echo "= Partition Resize Failed."
+			continue
 		fi
-			
 	done
-	
+
 	partprobe "$MEDIA"
 
 	FS_TYPE=$(file -s "$ROOTPART" | awk '{print $3}')
