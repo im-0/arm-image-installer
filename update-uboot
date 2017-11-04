@@ -10,9 +10,9 @@ usage() {
     echo "
 Usage: $(basename ${0}) <options>
 
-   --target=TARGET  - target board
-   --media=DEVICE   - media device file (/dev/[sdX|mmcblkX])
-   --tag=KOJI TAG   - koji tag to download build
+	--media=DEVICE	- media device file (/dev/[sdX|mmcblkX])
+	--tag=KOJI TAG	- koji tag to download build
+	--target=TARGET	- target board
 
 Example: $(basename ${0}) --target=panda --media=/dev/mmcblk0
 

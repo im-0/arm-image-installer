@@ -12,19 +12,18 @@ usage() {
     echo "
 Usage: $(basename ${0}) <options>
 
-   --image=IMAGE    - xz compressed image file name
-   --target=TARGET  - target board
-   --media=DEVICE   - media device file (/dev/[sdX|mmcblkX])
-   --norootpass     - Remove the root password
-   -y		    - Assumes yes, will not wait for confirmation
-   --version	    - Display version and exit
-   --resizefs	    - Resize root filesystem to fill media device
-   --addconsole     - Add system console to extlinux.conf
-   --addkey=        - /path/to/ssh-public-key
-   --supported	    - List of supported hardware
+	--addconsole    - Add system console to extlinux.conf
+	--addkey=       - /path/to/ssh-public-key
+	--image=IMAGE	- xz compressed image file name
+	--media=DEVICE	- media device file (/dev/[sdX|mmcblkX])
+	--norootpass	- Remove the root password
+	--resizefs	- Resize root filesystem to fill media device
+	--supported	- List of supported hardware
+	--target=TARGET	- target board
+	--version	- Display version and exit
+	-y		- Assumes yes, will not wait for confirmation
 
 Example: $(basename ${0}) --image=Fedora-Rawhide.xz --target=Bananapi --media=/dev/mmcblk0
-
 
 "
 }
