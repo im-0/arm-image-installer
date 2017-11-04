@@ -14,10 +14,9 @@ if [ "$UBOOT" = "package uboot-images-armv7 is not installed" ]; then
 	echo
 	echo "$UBOOT"
 	read -p "Would you like to install uboot-images-armv7 (yes or no)? " INSTALL_UBOOT
-	if [ "$(echo ${INSTALL_UBOOT} | tr [:lower:] [:upper:])" = "YES" ] ; thee
-n
-	dnf install -y uboot-images-armv7
-	UBOOT=$(rpm -q uboot-images-armv7)
+	if [ "$(echo ${INSTALL_UBOOT} | tr [:lower:] [:upper:])" = "YES" ] ; then
+		dnf install -y uboot-images-armv7
+		UBOOT=$(rpm -q uboot-images-armv7)
 	fi
 fi
 FW=$(rpm -q bcm283x-firmware)
@@ -39,10 +38,10 @@ echo
 echo "= Uboot: $UBOOT"
 echo "= Firmware: $FW"
 if [ -d /boot/fw ]; then
-		mount /dev/mmcblk0p1 /boot/fw
-	else
-		mkdir /boot/fw
-		mount /dev/mmcblk0p1 /boot/fw
+	mount /dev/mmcblk0p1 /boot/fw
+else
+	mkdir /boot/fw
+	mount /dev/mmcblk0p1 /boot/fw
 fi
 # copy uboot
 if [ -f /usr/share/uboot/rpi_2/u-boot.bin ]; then
@@ -65,4 +64,3 @@ umount /boot/fw
 echo 
 echo "== Complete!"
 echo
-
