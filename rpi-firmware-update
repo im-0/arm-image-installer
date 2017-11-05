@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # ensure sudo user
 if [ "$(whoami)" != "root" ]; then
