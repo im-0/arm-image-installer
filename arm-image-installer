@@ -144,6 +144,11 @@ if [ "$MEDIA" = "" ]; then
 	exit 1
 fi
 
+if [ "$MEDIA" = "/dev/sda" ]; then
+        " == NOTE: For user protection, this script will not run on sda."
+        exit 1
+fi
+
 # change cubietruck target to uppercase
 if [ "$TARGET" = "cubietruck" ]; then
 	TARGET="Cubietruck"
