@@ -241,7 +241,6 @@ case $MEDIA in
 		if [ -e "$MEDIA"p5 ]; then
 			export FIRMPART="${MEDIA}p1"
 			BOOTPART="${MEDIA}p2"
-			EXTDPART="${MEDIA}p4"
 			ROOTPART="${MEDIA}p5"
 			PARTNUM=5
 		else
@@ -255,7 +254,6 @@ case $MEDIA in
 		if [ -e "$MEDIA"5 ]; then
 			export FIRMPART="${MEDIA}1"
 			BOOTPART="${MEDIA}2"
-			EXTDPART="${MEDIA}4"
 			ROOTPART="${MEDIA}5"
 			PARTNUM=5
 		else
@@ -316,11 +314,11 @@ fi
 if [ "$SELINUX" != "" ]; then
 	if [ "$(echo ${SELINUX} | tr [:lower:] [:upper:])" = "OFF" ]; then
 		echo "= Turning SELinux off ..."
-		sed -i 's/append/& enforcing=0/' /tmp/boot/extlinux/extlinux.conf
+		sed -i 's/SELINUX=enforcing/SELINUX=permissive/' /tmp/root/etc/selinux/config
 		# turn on selinux
 	elif [ "$(echo ${SELINUX} | tr [:lower:] [:upper:])" = "ON" ]; then
 		echo "= Turning SELinux on ..."
-		sed -i 's/ enforcing=0//' /tmp/boot/extlinux/extlinux.conf
+		sed -i 's/SELINUX=permissive/SELINUX=enforcing/' /tmp/root/etc/selinux/config
 	fi
 fi
 # Remove root password
