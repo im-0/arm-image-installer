@@ -238,27 +238,31 @@ partprobe "$MEDIA"
 sleep 1
 case $MEDIA in
 	"/dev/mmcblk"*)
-		if [ -e "$MEDIA"p4 ]; then
+		if [ -e "$MEDIA"p5 ]; then
 			export FIRMPART="${MEDIA}p1"
 			BOOTPART="${MEDIA}p2"
+			EXTDPART="${MEDIA}p4"
+			ROOTPART="${MEDIA}p5"
+			PARTNUM=5
+		else
+			export FIRMPART="${MEDIA}1"
+			BOOTPART="${MEDIA}p1"
 			ROOTPART="${MEDIA}p4"
 			PARTNUM=4
-		else
-			BOOTPART="${MEDIA}p1"
-			ROOTPART="${MEDIA}p3"
-			PARTNUM=3
 		fi
 		;;
 	*)
-		if [ -e "$MEDIA"4 ]; then
+		if [ -e "$MEDIA"5 ]; then
 			export FIRMPART="${MEDIA}1"
 			BOOTPART="${MEDIA}2"
+			EXTDPART="${MEDIA}4"
+			ROOTPART="${MEDIA}5"
+			PARTNUM=5
+		else
+			export FIRMPART="${MEDIA}1"
+			BOOTPART="${MEDIA}1"
 			ROOTPART="${MEDIA}4"
 			PARTNUM=4
-		else
-			BOOTPART="${MEDIA}1"
-			ROOTPART="${MEDIA}3"
-			PARTNUM=3
 		fi
 		;;
 esac
