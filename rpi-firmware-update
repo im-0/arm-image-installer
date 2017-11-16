@@ -6,20 +6,32 @@ if [ "$(whoami)" != "root" ]; then
 	exit 1
 fi
 
+if [ "$(uname -m)" == "aarch64" ] ; then
+	ARCH="aarch64"
+	DESTDIR="/boot/efi"
+	UBOOT=$(rpm -q uboot-images-armv8)
+	UBOOTPKG=uboot-images-armv8
+else
+	ARCH="armhf"
+	DESTDIR="/boot/fw"
+	UBOOT=$(rpm -q uboot-images-armv7)
+	UBOOTPKG=uboot-images-armv7
+fi
+FW=$(rpm -q bcm283x-firmware)
+
 echo
 echo "= This will update U-Boot and the "
 echo "= Raspberry Pi Firmware to the latest."
-UBOOT=$(rpm -q uboot-images-armv7)
-if [ "$UBOOT" = "package uboot-images-armv7 is not installed" ]; then
+
+if [ "$UBOOT" = "package ${UBOOTPKG} is not installed" ]; then
 	echo
 	echo "$UBOOT"
-	read -p "Would you like to install uboot-images-armv7 (yes or no)? " INSTALL_UBOOT
+	read -p "Would you like to install ${UBOOTPKG} (yes or no)? " INSTALL_UBOOT
 	if [ "$(echo ${INSTALL_UBOOT} | tr [:lower:] [:upper:])" = "YES" ]; then
-		dnf install -y uboot-images-armv7
-		UBOOT=$(rpm -q uboot-images-armv7)
+		dnf install -y ${UBOOTPKG}
+		UBOOT=$(rpm -q ${UBOOTPKG})
 	fi
 fi
-FW=$(rpm -q bcm283x-firmware)
 if [ "$FW" = "package bcm283x-firmware is not installed" ]; then
 	echo
 	echo "$FW"
@@ -29,7 +41,7 @@ if [ "$FW" = "package bcm283x-firmware is not installed" ]; then
 		FW=$(rpm -q bcm283x-firmware)
 	fi
 fi
-if [ "$FW" = "package bcm283x-firmware is not installed" ] && [ "$UBOOT" = "package uboot-images-armv7 is not installed" ]; then
+if [ "$FW" = "package bcm283x-firmware is not installed" ] && [ "$UBOOT" = "package ${UBOOTPKG} is not installed" ]; then
 	echo
 	echo "Nothing to update, exiting."
 	exit 0
@@ -37,30 +49,46 @@ fi
 echo
 echo "= Uboot: $UBOOT"
 echo "= Firmware: $FW"
-if [ -d /boot/fw ]; then
-	mount /dev/mmcblk0p1 /boot/fw
-else
-	mkdir /boot/fw
-	mount /dev/mmcblk0p1 /boot/fw
-fi
-# copy uboot
-if [ -f /usr/share/uboot/rpi_2/u-boot.bin ]; then
-	cp -rp /usr/share/uboot/rpi_2/u-boot.bin /boot/fw/rpi2-u-boot.bin
+if [ "${ARCH}" == "aarch64" ]; then
+	# dont mount or umount when aarch64 is efi
+	# copy uboot
+	if [ -f /usr/share/uboot/rpi_3/u-boot.bin ]; then
+		cp -rp /usr/share/uboot/rpi_3/u-boot.bin /boot/efi/rpi3-u-boot.bin
 	else
-	echo "Missing U-Boot for Raspberry Pi 2, no file copied."
-fi
-if [ -f /usr/share/uboot/rpi_3_32b/u-boot.bin ]; then
-	cp -rp /usr/share/uboot/rpi_3_32b/u-boot.bin /boot/fw/rpi3-u-boot.bin
+		echo "Missing U-Boot for Raspberry Pi 3 Aarch64, no file copied."
+	fi
+	# copy fw
+	if [ -d /usr/share/bcm283x-firmware ]; then
+		cp -rfp /usr/share/bcm283x-firmware/*.{bin,dat,elf} /boot/efi/
 	else
-	echo "Missing U-Boot for Raspberry Pi 3, no file copied."
-fi
-# copy fw
-if [ -d /usr/share/bcm283x-firmware ]; then
-	cp -rfp /usr/share/bcm283x-firmware/*.{bin,dat,elf} /boot/fw/
+		echo "Missing bcm283x-firmware, no files copied."
+	fi
 else
-	echo "Missing bcm283x-firmware, no files copied."
+	if [ -d /boot/fw ]; then
+		mount /dev/mmcblk0p1 /boot/fw
+	else
+		mkdir /boot/fw
+		mount /dev/mmcblk0p1 /boot/fw
+	fi
+	# copy uboot
+	if [ -f /usr/share/uboot/rpi_2/u-boot.bin ]; then
+		cp -rp /usr/share/uboot/rpi_2/u-boot.bin /boot/fw/rpi2-u-boot.bin
+	else
+		echo "Missing U-Boot for Raspberry Pi 2, no file copied."
+	fi
+	if [ -f /usr/share/uboot/rpi_3_32b/u-boot.bin ]; then
+		cp -rp /usr/share/uboot/rpi_3_32b/u-boot.bin /boot/fw/rpi3-u-boot.bin
+	else
+		echo "Missing U-Boot for Raspberry Pi 3, no file copied."
+	fi
+	# copy fw
+	if [ -d /usr/share/bcm283x-firmware ]; then
+		cp -rfp /usr/share/bcm283x-firmware/*.{bin,dat,elf} /boot/fw/
+	else
+		echo "Missing bcm283x-firmware, no files copied."
+	fi
+	umount /boot/fw
 fi
-umount /boot/fw
-echo 
+echo
 echo "== Complete!"
 echo
