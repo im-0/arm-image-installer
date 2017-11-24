@@ -145,7 +145,7 @@ if [ "$MEDIA" = "" ]; then
 fi
 
 if [ "$MEDIA" = "/dev/sda" ]; then
-        " == NOTE: For user protection, this script will not run on sda."
+        echo " == NOTE: For user protection, this script will not run on sda."
         exit 1
 fi
 
@@ -235,8 +235,13 @@ if [ "$IMAGE" != "" ]; then
 	echo "= To: $MEDIA ...."
 	xzcat $IMAGE | dd of=$MEDIA bs=4M; sync; sleep 3
 	echo "= Writing image complete!"
-	# read the new partition table
-	partprobe "$MEDIA"
+	if [ "$IMAGE" = "Fedora-Server-27-1.6.aarch64.raw.xz" ]; then
+                echo "= The AArch64 Server image uses LVM and will require manual U-Boot install and resize."
+                exit 0
+        else
+		# read the new partition table
+		partprobe "$MEDIA"
+	fi
 fi
 # check to see how many partitions on the image
 partprobe "$MEDIA"
@@ -249,8 +254,8 @@ case $MEDIA in
 			ROOTPART="${MEDIA}p5"
 			PARTNUM=5
 		else
-			export FIRMPART="${MEDIA}1"
-			BOOTPART="${MEDIA}p1"
+			export FIRMPART="${MEDIA}p1"
+			BOOTPART="${MEDIA}p2"
 			ROOTPART="${MEDIA}p4"
 			PARTNUM=4
 		fi
@@ -263,7 +268,7 @@ case $MEDIA in
 			PARTNUM=5
 		else
 			export FIRMPART="${MEDIA}1"
-			BOOTPART="${MEDIA}1"
+			BOOTPART="${MEDIA}2"
 			ROOTPART="${MEDIA}4"
 			PARTNUM=4
 		fi
@@ -275,16 +280,17 @@ if [ "$RESIZEFS" != "" ]; then
 	echo "= Resizing $MEDIA ...."
 	sync
 	count=0
-	echo ", +" | sfdisk -N "$PARTNUM" "$MEDIA"
-	while [ $? != '0' ]; do
-		sleep 5
+	if [ "$PARTNUM" = "4" ]; then
 		echo ", +" | sfdisk -N "$PARTNUM" "$MEDIA"
-		count=$((count+1))
-		if [ $count -gt 5 ]; then
-			echo "= Partition Resize Failed."
-			continue
-		fi
-	done
+		while [ $? != '0' ]; do
+			sleep 5
+			echo ", +" | sfdisk -N "$PARTNUM" "$MEDIA"
+			((count++))
+			if [ $count -gt 5 ]; then
+				echo "= Partition Resize Failed."
+				continue
+			fi
+		done
 
 	partprobe "$MEDIA"
 
@@ -299,6 +305,9 @@ if [ "$RESIZEFS" != "" ]; then
 			fsck.ext4 -fy "$ROOTPART"
 			resize2fs "$ROOTPART"
 		fi
+	else
+                echo "= NOTE: Manual partition resizing is required."
+        fi
 fi
 
 # make temp mount points
@@ -352,9 +361,9 @@ else
 	PREFIX=/tmp/root
 	. "${BOARDDIR}/${TARGET}"
 	# Add console
-	if [ "$CONSOLE" = "1" ] && [ "$SYSCON" != "" ]; then
-		echo "= Adding console $SYSCON to extlinux.conf ..."
-		sed -i "s|append|& console=$SYSCON|" /tmp/boot/extlinux/extlinux.conf
+	if [ "$CONSOLE" = "1" ] && [ "$SYSCON" != "" ] && [ -f /tmp/boot/extlinux/extlinux.conf ]; then
+        	echo "= Adding console $SYSCON to extlinux.conf ..."
+        	sed -i "s|append|& console=$SYSCON|" /tmp/boot/extlinux/extlinux.conf
 		if [ "$TARGET" = "rpi2" ] || [ "$TARGET" = "rpi3" ]; then
 			mkdir /tmp/fw &> /dev/null
 			mount "$FIRMPART" /tmp/fw &> /dev/null
