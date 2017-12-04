@@ -361,7 +361,11 @@ else
 	PREFIX=/tmp/root
 	. "${BOARDDIR}/${TARGET}"
 	# Add console
-	if [ "$CONSOLE" = "1" ] && [ "$SYSCON" != "" ] && [ -f /tmp/boot/extlinux/extlinux.conf ]; then
+	if [ "$CONSOLE" = "1" ] && [ -f /tmp/boot/extlinux/extlinux.conf ]; then
+		if [ "$SYSCON" = "" ]; then
+			SYSCON = "ttyS0,115200"
+			echo "= No console listed for $TARGET, adding default $SYSCON ."
+		fi
         	echo "= Adding console $SYSCON to extlinux.conf ..."
         	sed -i "s|append|& console=$SYSCON|" /tmp/boot/extlinux/extlinux.conf
 		if [ "$TARGET" = "rpi2" ] || [ "$TARGET" = "rpi3" ]; then
