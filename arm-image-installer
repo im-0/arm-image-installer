@@ -388,6 +388,14 @@ sync
 umount $ROOTPART $BOOTPART $FIRMPART &> /dev/null
 rmdir  /tmp/root /tmp/boot /tmp/fw &> /dev/null
 
+if [ "$URL" != "" ]; then
+	echo
+	echo "= NOTE"
+	echo "= Additional instructions for $TARGET can be found at:"
+	echo "= $URL "
+	echo 
+fi
+
 echo ""
 echo "= Installation Complete! Insert into the "$TARGET" and boot."
 exit 0
