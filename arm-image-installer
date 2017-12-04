@@ -363,7 +363,7 @@ else
 	# Add console
 	if [ "$CONSOLE" = "1" ] && [ -f /tmp/boot/extlinux/extlinux.conf ]; then
 		if [ "$SYSCON" = "" ]; then
-			SYSCON = "ttyS0,115200"
+			SYSCON="ttyS0,115200"
 			echo "= No console listed for $TARGET, adding default $SYSCON ."
 		fi
         	echo "= Adding console $SYSCON to extlinux.conf ..."
@@ -381,6 +381,13 @@ if [ "$FIX_RPI" != "" ]; then
 	echo "= Blacklisting the VC4 Driver for the Raspberry Pi 2/3"
 	echo blacklist vc4 > /tmp/root/etc/modprobe.d/blacklist-vc4.conf
 	sed -i 's/append/& rd.driver.blacklist=vc4/' /tmp/boot/extlinux/extlinux.conf
+fi
+
+# add option kernel parameters
+if [ "$OPT_ARGS" != "" ] ; then
+	echo "= Adding optional kernel parameters for $TARGET : "
+	echo "= $OPT_ARGS"
+	sed -i "s|append|& $OPT_ARGS|" /tmp/boot/extlinux/extlinux.conf
 fi
 
 sync 
