@@ -145,8 +145,19 @@ if [ "$MEDIA" = "" ]; then
 fi
 
 if [ "$MEDIA" = "/dev/sda" ]; then
-        echo " == NOTE: For user protection, this script will not run on sda."
-        exit 1
+	echo ""
+	echo " ***********************************************************"
+        echo " ** WARNING: You have requested the image be written to sda."
+	echo " ** /dev/sda is usually the root filesystem of the host. "
+	echo " ***********************************************************"
+	echo " ** Do you wish to continue? (type 'yes' to continue)"
+	echo " ***********************************************************"
+         # wait for agreement
+        read -p " = Continue? " AGREE
+        if [ "$(echo ${AGREE} | tr [:lower:] [:upper:])" != "YES" ]; then
+                echo "User exit, no image written."
+                exit 0
+        fi
 fi
 
 # change cubietruck target to uppercase
