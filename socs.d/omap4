@@ -4,4 +4,4 @@ dd if=$PREFIX/usr/share/uboot/$TARGET/MLO of=$MEDIA count=1 seek=1 conv=notrunc 
 echo "= Writing u-boot.img for $TARGET...."
 dd if=$PREFIX/usr/share/uboot/$TARGET/u-boot.img of=$MEDIA count=2 seek=1 conv=notrunc bs=384k; sync
 # set console
-SYSCON=ttyO0,115200
+SYSCON=ttyO2,115200
