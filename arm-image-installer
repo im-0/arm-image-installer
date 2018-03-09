@@ -20,6 +20,7 @@ Usage: $(basename ${0}) <options>
 	--resizefs	- Resize root filesystem to fill media device
 	--supported	- List of supported hardware
 	--target=TARGET	- target board
+	--relabel       - SELinux relabel root filesystem
 	--version	- Display version and exit
 	-y		- Assumes yes, will not wait for confirmation
 
@@ -105,6 +106,9 @@ while [ $# -gt 0 ]; do
 		--supported)
 			cat $DOC_DIR/SUPPORTED-BOARDS
 			exit 0
+			;;
+		--relabel)
+			RELABEL=1
 			;;
 		--version)
 			echo "$(basename ${0})-"$VERSION""
@@ -201,6 +205,9 @@ fi
 # SE Linux On/Off
 if [ "$SELINUX" != "" ]; then
 	echo "= SELINUX = $SELINUX"
+fi
+if [ "RELABEL" != "" ]; then
+	echo "= SELinux relabel will be completed on first boot."
 fi
 # Remove root password
 if [ "$NOROOTPASS" != "" ]; then
@@ -394,6 +401,11 @@ if [ "$FIX_RPI" != "" ]; then
 	sed -i 's/append/& rd.driver.blacklist=vc4/' /tmp/boot/extlinux/extlinux.conf
 fi
 
+# touch /.autorelabel
+if [ "RELABEL" != "" ]; then
+	echo "= Touch /.autorelabel on rootfs."
+	touch /tmp/root/.autorelabel
+fi
 # add option kernel parameters
 if [ "$OPT_ARGS" != "" ] ; then
 	echo "= Adding optional kernel parameters for $TARGET : "
