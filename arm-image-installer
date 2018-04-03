@@ -316,7 +316,6 @@ if [ "$RESIZEFS" != "" ]; then
 		if [ "$FS_TYPE" = "XFS" ]; then
 			mkdir /tmp/root &> /dev/null
 			mount "$ROOTPART" /tmp/root &> /dev/null
-			fsck.xfs -fy "$ROOTPART"
 			xfs_growfs /tmp/root
 			umount "$ROOTPART"
 		else
