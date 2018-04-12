@@ -253,7 +253,7 @@ if [ "$IMAGE" != "" ]; then
 	echo "= To: $MEDIA ...."
 	xzcat $IMAGE | dd of=$MEDIA bs=4M; sync; sleep 3
 	echo "= Writing image complete!"
-	if [ "$IMAGE" = "Fedora-Server-27-1.6.aarch64.raw.xz" ]; then
+	if [ "$(echo $IMAGE | awk '/aarch64/ && /Server/')" != "" ]; then
                 echo "= The AArch64 Server image uses LVM and will require manual U-Boot install and resize."
                 exit 0
         else
