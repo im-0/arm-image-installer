@@ -206,7 +206,7 @@ fi
 if [ "$SELINUX" != "" ]; then
 	echo "= SELINUX = $SELINUX"
 fi
-if [ "RELABEL" != "" ]; then
+if [ "$RELABEL" != "" ]; then
 	echo "= SELinux relabel will be completed on first boot."
 fi
 # Remove root password
@@ -401,7 +401,7 @@ if [ "$FIX_RPI" != "" ]; then
 fi
 
 # touch /.autorelabel
-if [ "RELABEL" != "" ]; then
+if [ "$RELABEL" != "" ]; then
 	echo "= Touch /.autorelabel on rootfs."
 	touch /tmp/root/.autorelabel
 fi
