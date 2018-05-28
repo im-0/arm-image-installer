@@ -1,5 +1,4 @@
 AllWinner Devices:
-
 A10-OLinuXino-Lime A10s-OLinuXino-M A13-OLinuXino A13-OLinuXinoM
  A20-Olimex-SOM-EVB A20-OLinuXino-Lime A20-OLinuXino-Lime2
  A20-OLinuXino-Lime2-eMMC A20-OLinuXino_MICRO a64-olinuxino Ampe_A76
@@ -20,20 +19,19 @@ A10-OLinuXino-Lime A10s-OLinuXino-M A13-OLinuXino A13-OLinuXinoM
  sopine_baseboard sunxi_Gemei_G9 UTOO_P66 Wexler_TAB7200 Wits_Pro_A20_DKT
  Yones_Toptech_BS1078_V2
 
-MX6 Devices:
+i.MX6/7 Devices:
 cm_fx6 liteboard marsboard mx6cuboxi novena riotboard udoo udoo_neo
  usbarmory wandboard warp warp7
 
-OMAP Devices:
+Texas Instruments Devices:
 am335x_boneblack am335x_evm am57xx_evm chiliboard cl-som-am57x kc1
  omap3_beagle omap4_panda omap5_uevm
 
 MVEBU Devices:
 clearfog 
 
-ST Devices:
-stih410-b2260
+Qualcomm Devices:
+dragonboard410c dragonboard820c
 
 Other Devices:
-jetson-tk1 rpi2 rpi3 trimslice 
-
+jetson-tk1 rpi2 rpi3 trimslice stih410-b2260
