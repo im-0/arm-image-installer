@@ -5,7 +5,7 @@
 
 # Automate Media Creation for Fedora ARM 
 # Current version
-VERSION=2.3
+VERSION=2.4
 
 # usage message
 usage() {
@@ -246,7 +246,6 @@ fi
 # umount before starting
 umount $MEDIA* &> /dev/null
 if [ "$(fdisk -l $MEDIA | grep LVM)" != "" ]   ; then
-	#LVM_NAME=$(pvs | grep $MEDIA | awk '{print $2}')
 	vgchange -a n $(pvs | grep $MEDIA | awk '{print $2}')
 fi
 
