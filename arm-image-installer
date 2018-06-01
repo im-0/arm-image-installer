@@ -410,26 +410,31 @@ fi
 if [ "$TARGET" = "" ]; then
 	echo "= No U-boot will be written."
 	TARGET="Mystery Board"
+elif [ "$(echo $IMAGE | grep -i iot)" != "" ]; then
+	PREFIX=/tmp/root/ostree/deploy/fedora-iot/deploy/*/
+	# dd doesnt support wildcards, echo to expand
+	PREFIX=$(echo $PREFIX)
+	. "${BOARDDIR}/${TARGET}"
 else
 	PREFIX=/tmp/root
 	. "${BOARDDIR}/${TARGET}"
-	
-	# Add console
-	if [ "$CONSOLE" = "1" ] && [ -f /tmp/boot/extlinux/extlinux.conf ]; then
-		if [ "$SYSCON" = "" ]; then
-			SYSCON="ttyS0,115200"
-			echo "= No console listed for $TARGET, adding default $SYSCON ."
-		fi
-        	echo "= Adding console $SYSCON to extlinux.conf ..."
-        	sed -i "s|append|& console=$SYSCON|" /tmp/boot/extlinux/extlinux.conf
-		if [ "$TARGET" = "rpi2" ] || [ "$TARGET" = "rpi3" ]; then
-			mkdir /tmp/fw &> /dev/null
-			mount "$FIRMPART" /tmp/fw &> /dev/null
-			sed -i "s|# enable_uart=1|enable_uart=1|" /tmp/fw/config.txt
-		fi
-	fi
-
 fi
+	
+# Add console
+if [ "$CONSOLE" = "1" ] && [ -f /tmp/boot/extlinux/extlinux.conf ]; then
+	if [ "$SYSCON" = "" ]; then
+		SYSCON="ttyS0,115200"
+		echo "= No console listed for $TARGET, adding default $SYSCON ."
+	fi
+       	echo "= Adding console $SYSCON to extlinux.conf ..."
+       	sed -i "s|append|& console=$SYSCON|" /tmp/boot/extlinux/extlinux.conf
+	if [ "$TARGET" = "rpi2" ] || [ "$TARGET" = "rpi3" ]; then
+		mkdir /tmp/fw &> /dev/null
+		mount "$FIRMPART" /tmp/fw &> /dev/null
+		sed -i "s|# enable_uart=1|enable_uart=1|" /tmp/fw/config.txt
+	fi
+fi
+
 # fix up rpi2/3
 if [ "$FIX_RPI" != "" ]; then
 	echo "= Blacklisting the VC4 Driver for the Raspberry Pi 2/3"
