@@ -246,7 +246,7 @@ fi
 # umount before starting
 umount $MEDIA* &> /dev/null
 if [ "$(fdisk -l $MEDIA | grep LVM)" != "" ]   ; then
-	vgchange -a n $(pvs | grep $MEDIA | awk '{print $2}')
+	vgchange -a n $(pvs | grep $MEDIA | awk '{print $2}') &> /dev/null
 fi
 
 # Write the disk image to media
@@ -321,7 +321,7 @@ if [ "$RESIZEFS" != "" ]; then
 
 	if [ "$PARTNUM" = "3" ] && [ "$(fdisk -l $MEDIA | grep LVM)" != "" ]   ; then
 		LVM_NAME=$(pvs | grep $MEDIA | awk '{print $2}')
-		vgchange -a n $LVM_NAME
+		vgchange -a n $LVM_NAME &> /dev/null
 		echo ", +" | sfdisk -N "$PARTNUM" "$MEDIA"
 		while [ $? != '0' ]; do
                         sleep 5
@@ -334,7 +334,7 @@ if [ "$RESIZEFS" != "" ]; then
                 done
 		sleep 5
 		partprobe "$MEDIA"
-		vgchange -a y $LVM_NAME
+		vgchange -a y $LVM_NAME &> /dev/null
 		pvresize "$ROOTPART"
 		lvextend -l +100%FREE /dev/$LVM_NAME/root
 		ROOTPART="/dev/$LVM_NAME/root"
@@ -458,7 +458,7 @@ sync
 
 umount $ROOTPART $BOOTPART $FIRMPART &> /dev/null
 if [ "$LVM_NAME" != "" ]; then
-	vgchange -a n $LVM_NAME
+	vgchange -a n $LVM_NAME &> /dev/null
 fi
 rmdir  /tmp/root /tmp/boot /tmp/fw &> /dev/null
 
