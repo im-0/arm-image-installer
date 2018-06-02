@@ -305,17 +305,30 @@ if [ "$RESIZEFS" != "" ]; then
 	echo "= Resizing $MEDIA ...."
 	sync
 	count=0
-	if [ "$PARTNUM" = "4" ]; then
-		echo ", +" | sfdisk -N "$PARTNUM" "$MEDIA"
+	if [ "$PARTNUM" = "4" ] || [ "$PARTNUM" = "5" ]; then
+		echo ", +" | sfdisk -N "4" "$MEDIA"
 		while [ $? != '0' ]; do
 			sleep 5
-			echo ", +" | sfdisk -N "$PARTNUM" "$MEDIA"
+			echo ", +" | sfdisk -N "4" "$MEDIA"
 			((count++))
 			if [ $count -gt 5 ]; then
 				echo "= Partition Resize Failed."
 				continue
 			fi
 		done
+		partprobe "$MEDIA"
+		if [ "$PARTNUM" = "5" ]; then
+			echo ", +" | sfdisk -N "$PARTNUM" "$MEDIA"
+                	while [ $? != '0' ]; do
+                        	sleep 5
+                        	echo ", +" | sfdisk -N "$PARTNUM" "$MEDIA"
+                        	((count++))
+                        	if [ $count -gt 5 ]; then
+                               		echo "= Partition Resize Failed."
+                                	continue
+                        	fi
+                	done
+		fi
 		partprobe "$MEDIA"
 	fi
 
