@@ -337,7 +337,7 @@ if [ "$RESIZEFS" != "" ]; then
 		if [ "x$LVM_NAME" = "xfedora" ]; then
 			#VGs with the name 'fedora' are problematic to be used
 			#on Fedora systems. We rename them to 'image'.
-			LVM_UUID=$(pvs -o +vguuid | grep /dev/sdb | awk '{print $7}')
+			LVM_UUID=$(pvs -o +vguuid | grep $MEDIA | awk '{print $7}')
 			vgrename $LVM_UUID image
 			LVM_NAME=image
 			LVM_RENAMED=yes
