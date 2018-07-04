@@ -21,6 +21,7 @@ Usage: $(basename ${0}) <options>
 	--supported	- List of supported hardware
 	--target=TARGET	- target board
 	--relabel       - SELinux relabel root filesystem
+	--args		- kernel commandline addition
 	--version	- Display version and exit
 	-y		- Assumes yes, will not wait for confirmation
 
@@ -91,6 +92,14 @@ while [ $# -gt 0 ]; do
 				shift
 			fi
 			;;
+		--args*)
+                        if echo $1 | grep '=' >/dev/null ; then
+                                OPT_ARGS=$(echo $1 | sed 's/^--args=//')
+                        else
+                                OPT_ARGS=$2
+                                shift
+                        fi
+                        ;;
 		--norootpass)
 			NOROOTPASS=1
 			;;
