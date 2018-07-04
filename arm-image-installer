@@ -453,7 +453,7 @@ if [ "$CONSOLE" = "1" ] && [ -f /tmp/boot/extlinux/extlinux.conf ]; then
 		echo "= No console listed for $TARGET, adding default $SYSCON ."
 	fi
        	echo "= Adding console $SYSCON to extlinux.conf ..."
-       	sed -i "s|append|& console=$SYSCON|" /tmp/boot/extlinux/extlinux.conf
+       	sed -i "s|append|& console=$SYSCON console=tty0 |" /tmp/boot/extlinux/extlinux.conf
 	if [ "$TARGET" = "rpi2" ] || [ "$TARGET" = "rpi3" ]; then
 		mkdir /tmp/fw &> /dev/null
 		mount "$FIRMPART" /tmp/fw &> /dev/null
