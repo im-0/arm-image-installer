@@ -13,6 +13,7 @@ Usage: $(basename ${0}) <options>
 	--media=DEVICE	- media device file (/dev/[sdX|mmcblkX])
 	--tag=KOJI TAG	- koji tag to download build
 	--target=TARGET	- target board
+        --reboot        - reboot after update
 
 Example: $(basename ${0}) --target=panda --media=/dev/mmcblk0
 
@@ -53,6 +54,9 @@ while [ $# -gt 0 ]; do
 				shift
 			fi
 			;;
+                 --reboot)
+                         REBOOT=1
+                        ;;
 		*)
 			echo "$(basename ${0}): Error - ${1}"
 			usage
@@ -117,7 +121,12 @@ if [ "$TARGET" = "" ]; then
 else
 	. "${DIR}/${BOARDDIR}/${TARGET}"
 fi
-
-echo "= Complete!"
+# reboot after writing
+if [ "REBOOT" = "1" ]; then 
+        echo "= Complete, rebooting.."
+        reboot
+else
+        echo "= Complete!"
+fi
 
 # vi: tabstop=8 softtabstop=0 expandtab shiftwidth=8 smarttab
