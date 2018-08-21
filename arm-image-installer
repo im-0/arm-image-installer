@@ -35,7 +35,7 @@ Example: $(basename ${0}) --image=Fedora-Rawhide.xz --target=Bananapi --media=/d
 DIR=$(dirname $0)
 if [ -d "/usr/share/arm-image-installer/boards.d" ]; then
 	BOARDDIR="/usr/share/arm-image-installer/boards.d"
-	DOC_DIR="/usr/share/doc/fedora-arm-installer/"
+	DOC_DIR="/usr/share/doc/arm-image-installer/"
 else
 	DIR=$(dirname $0)
 	BOARDDIR="${DIR}/boards.d"
