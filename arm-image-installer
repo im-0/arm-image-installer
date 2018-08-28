@@ -341,18 +341,19 @@ if [ "$RESIZEFS" != "" ]; then
 		partprobe "$MEDIA"
 	fi
 
-	if [ "$PARTNUM" = "3" ] && [ "$(fdisk -l $MEDIA | grep LVM)" != "" ]   ; then
-		LVM_NAME=$(pvs | grep $MEDIA | awk '{print $2}')
-		if [ "x$LVM_NAME" = "xfedora" ]; then
-			#VGs with the name 'fedora' are problematic to be used
-			#on Fedora systems. We rename them to 'image'.
-			LVM_UUID=$(pvs -o +vguuid | grep $MEDIA | awk '{print $7}')
-			vgrename $LVM_UUID image
-			LVM_NAME=image
-			LVM_RENAMED=yes
+	if [ "$PARTNUM" = "3" ]; then
+		if [ "$(fdisk -l $MEDIA | grep LVM)" != "" ]   ; then
+			LVM_NAME=$(pvs | grep $MEDIA | awk '{print $2}')
+			if [ "x$LVM_NAME" = "xfedora" ]; then
+				#VGs with the name 'fedora' are problematic to be used
+				#on Fedora systems. We rename them to 'image'.
+				LVM_UUID=$(pvs -o +vguuid | grep $MEDIA | awk '{print $7}')
+				vgrename $LVM_UUID image
+				LVM_NAME=image
+				LVM_RENAMED=yes
+			fi
+			vgchange -a n $LVM_NAME &> /dev/null
 		fi
-
-		vgchange -a n $LVM_NAME &> /dev/null
 		echo ", +" | sfdisk -N "$PARTNUM" "$MEDIA"
 		while [ $? != '0' ]; do
                         sleep 5
@@ -365,19 +366,21 @@ if [ "$RESIZEFS" != "" ]; then
                 done
 		sleep 5
 		partprobe "$MEDIA"
-		vgchange -a y $LVM_NAME &> /dev/null
-		pvresize "$ROOTPART"
-		lvextend -l +100%FREE /dev/$LVM_NAME/root
-		ROOTPART="/dev/$LVM_NAME/root"
+		if [ "$LVM_NAME" != "" ]; then
+			vgchange -a y $LVM_NAME &> /dev/null
+			pvresize "$ROOTPART"
+			lvextend -l +100%FREE /dev/$LVM_NAME/root
+			ROOTPART="/dev/$LVM_NAME/root"
+		fi
 	fi
 	
-	if [ "$LVM_NAME" != "" ]; then
-		FS_TYPE=$(file -s --dereference "$ROOTPART" | awk '{print $3}')
+	if [ "$(echo $IMAGE | grep -E '(iot|armhfp)')" = "" ]; then
+		FS_TYPE=$(sudo blkid "$ROOTPART" | cut -d'"' -f 4)
 	else
-		FS_TYPE=$(file -s --dereference "$ROOTPART" | awk '{print $5}')
+		FS_TYPE=$(sudo blkid "$ROOTPART" | cut -d'"' -f 6)
 	fi
 
-	if [ "$FS_TYPE" = "XFS" ] && [ $LVM_NAME != "" ]; then
+	if [ "$FS_TYPE" = "xfs" ] && [ $LVM_NAME != "" ]; then
 		mkdir /tmp/root &> /dev/null
 		mount "$ROOTPART" /tmp/root &> /dev/null
 		xfs_growfs /tmp/root
@@ -388,7 +391,9 @@ if [ "$RESIZEFS" != "" ]; then
 	fi
 
 	if [ "x$LVM_RENAMED" = "xyes" ]; then
-		vgrename image fedora
+		vgrename $LVM_NAME fedora
+		LVM_NAME=fedora
+		ROOTPART="/dev/$LVM_NAME/root"
 	fi
 else
 	echo "= NOTE: Manual partition resizing is required."
@@ -411,6 +416,21 @@ else
 		exit 1
 	fi
 fi
+
+# determine uboot and write to disk
+if [ "$TARGET" = "" ]; then
+        echo "= No U-boot will be written."
+        TARGET="Mystery Board"
+elif [ "$(echo $IMAGE | grep -i iot)" != "" ]; then
+        PREFIX=/tmp/root/ostree/deploy/fedora-iot/deploy/*/
+        # dd doesnt support wildcards, echo to expand
+        PREFIX=$(echo $PREFIX)
+        . "${BOARDDIR}/${TARGET}"
+else
+        PREFIX=/tmp/root
+        . "${BOARDDIR}/${TARGET}"
+fi
+
 
 # turn off selinux
 if [ "$SELINUX" != "" ]; then
@@ -440,19 +460,6 @@ if [ "$SSH_KEY" != "" ]; then
 		echo "= WARNING: No SSH Key Added."
 	fi
 	
-fi
-# determine uboot and write to disk 
-if [ "$TARGET" = "" ]; then
-	echo "= No U-boot will be written."
-	TARGET="Mystery Board"
-elif [ "$(echo $IMAGE | grep -i iot)" != "" ]; then
-	PREFIX=/tmp/root/ostree/deploy/fedora-iot/deploy/*/
-	# dd doesnt support wildcards, echo to expand
-	PREFIX=$(echo $PREFIX)
-	. "${BOARDDIR}/${TARGET}"
-else
-	PREFIX=/tmp/root
-	. "${BOARDDIR}/${TARGET}"
 fi
 	
 # Add console
