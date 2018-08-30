@@ -374,7 +374,7 @@ if [ "$RESIZEFS" != "" ]; then
 		fi
 	fi
 	
-	if [ "$(echo $IMAGE | grep -E '(iot|armhfp)')" = "" ]; then
+	if [ "$(echo $IMAGE | grep -i 'armhfp')" = "" ]; then
 		FS_TYPE=$(sudo blkid "$ROOTPART" | cut -d'"' -f 4)
 	else
 		FS_TYPE=$(sudo blkid "$ROOTPART" | cut -d'"' -f 6)
@@ -461,13 +461,15 @@ if [ "$SSH_KEY" != "" ]; then
 fi
 	
 # Add console
-if [ "$CONSOLE" = "1" ] && [ -f /tmp/boot/extlinux/extlinux.conf ]; then
-	if [ "$SYSCON" = "" ]; then
-		SYSCON="ttyS0,115200"
-		echo "= No console listed for $TARGET, adding default $SYSCON ."
+if [ "$CONSOLE" = "1" ]; then
+	if [ "$SYSCON" = "" ]; then 
+                SYSCON="ttyS0,115200" 
+                echo "= No console listed for $TARGET, adding default $SYSCON ." 
+        fi 
+       	if [ -f /tmp/boot/extlinux/extlinux.conf ]; then
+		echo "= Adding console $SYSCON to extlinux.conf ..."
+	       	sed -i "s|append|& console=$SYSCON console=tty0 |" /tmp/boot/extlinux/extlinux.conf
 	fi
-       	echo "= Adding console $SYSCON to extlinux.conf ..."
-       	sed -i "s|append|& console=$SYSCON console=tty0 |" /tmp/boot/extlinux/extlinux.conf
 	if [ "$TARGET" = "rpi2" ] || [ "$TARGET" = "rpi3" ]; then
 		mkdir /tmp/fw &> /dev/null
 		mount "$FIRMPART" /tmp/fw &> /dev/null
