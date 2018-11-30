@@ -255,7 +255,7 @@ fi
 # umount before starting
 umount $MEDIA* &> /dev/null
 if [ "$(fdisk -l $MEDIA | grep LVM)" != "" ]   ; then
-	vgchange -a n $(pvs | grep $MEDIA | awk '{print $2}') &> /dev/null
+	vgchange -a n $(pvs 2> /dev/null | grep $MEDIA | awk '{print $2}') &> /dev/null
 fi
 
 # Write the disk image to media
@@ -269,6 +269,16 @@ if [ "$IMAGE" != "" ]; then
 fi
 # check to see how many partitions on the image
 partprobe "$MEDIA"
+
+get_lvm_name () {
+	if [ "$(fdisk -l $MEDIA | grep LVM)" != "" ]   ; then
+		LVM_NAME=$(pvs 2> /dev/null | grep $MEDIA | awk '{print $2}')
+	fi
+}
+
+
+		
+
 sleep 1
 case $MEDIA in
 	"/dev/mmcblk"*)
@@ -342,18 +352,18 @@ if [ "$RESIZEFS" != "" ]; then
 	fi
 
 	if [ "$PARTNUM" = "3" ]; then
-		if [ "$(fdisk -l $MEDIA | grep LVM)" != "" ]   ; then
-			LVM_NAME=$(pvs | grep $MEDIA | awk '{print $2}')
-			if [ "x$LVM_NAME" = "xfedora" ]; then
-				#VGs with the name 'fedora' are problematic to be used
-				#on Fedora systems. We rename them to 'image'.
-				LVM_UUID=$(pvs -o +vguuid | grep $MEDIA | awk '{print $7}')
-				vgrename $LVM_UUID image
-				LVM_NAME=image
-				LVM_RENAMED=yes
-			fi
-			vgchange -a n $LVM_NAME &> /dev/null
+		get_lvm_name
+		if [ "x$LVM_NAME" = "xfedora" ]; then
+		#VGs with the name 'fedora' are problematic to be used
+		#on Fedora systems. We rename them to 'image'.
+			LVM_UUID=$(pvs -o +vguuid | grep $MEDIA | awk '{print $7}')
+			vgrename $LVM_UUID image
+			LVM_NAME=image
+			LVM_RENAMED=yes
 		fi
+
+		vgchange -a n $LVM_NAME &> /dev/null
+
 		echo ", +" | sfdisk -N "$PARTNUM" "$MEDIA"
 		while [ $? != '0' ]; do
                         sleep 5
@@ -405,6 +415,11 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
+if [ "$RESIZEFS" = "" ]; then
+	get_lvm_name
+	vgchange -a y $LVM_NAME &> /dev/null
+fi
+
 if [ "$LVM_NAME" != "" ]; then
 	mount "/dev/$LVM_NAME/root" /tmp/root
 else
@@ -449,6 +464,7 @@ fi
 # Add ssh key to the image
 if [ "$SSH_KEY" != "" ]; then
 	if [ -f $SSH_KEY ]; then
+		# /ostree/deploy/fedora-iot/var/roothome
 		echo "= Adding SSH key to authorized keys."
 		mkdir /tmp/root/root/.ssh/ &> /dev/null
 		cat $SSH_KEY >> /tmp/root/root/.ssh/authorized_keys
