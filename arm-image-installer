@@ -437,18 +437,22 @@ if [ "$(echo $IMAGE | grep -i iot)" != "" ]; then
 fi
 
 # determine uboot and write to disk
-if [ "$TARGET" = "" ]; then
-        echo "= No U-boot will be written."
-        TARGET="Mystery Board"
-elif [ "$IOT_IMAGE" = "1" ]; then
-        # dd doesnt support wildcards, echo to expand
-        PREFIX=$(echo $OSTREE_PREFIX)
-        . "${BOARDDIR}/${TARGET}"
+if [ "$TARGET" != "" ]; then
+	if [ "$IOT_IMAGE" = "1" ]; then
+		# dd doesnt support wildcards, echo to expand
+        	PREFIX=$(echo $OSTREE_PREFIX)
+	else
+		PREFIX=/tmp/root
+	fi
+	if [ -d "${PREFIX}/usr/share/uboot/${TARGET}" ]; then
+		. "${BOARDDIR}/${TARGET}"
+	else
+		echo "= No U-Boot files found for $TARGET."
+	fi
 else
-        PREFIX=/tmp/root
-        . "${BOARDDIR}/${TARGET}"
+	echo "= No U-boot will be written."
+	TARGET="Mystery Board"
 fi
-
 
 # turn off selinux
 if [ "$SELINUX" != "" ]; then
@@ -470,7 +474,7 @@ fi
 if [ "$SSH_KEY" != "" ]; then
 	if [ -f $SSH_KEY ]; then
 		echo "= Adding SSH key to authorized keys."
-		if [ $IOT_IMAGE = 1 ]; then
+		if [ "$IOT_IMAGE" = "1" ]; then
 			mkdir $OSTREE_ROOT_HOME/.ssh/ &> /dev/null
 			cat $SSH_KEY >> $OSTREE_ROOT_HOME/.ssh/authorized_keys
 			chmod -R u=rwX,o=,g= $OSTREE_ROOT_HOME/.ssh/
