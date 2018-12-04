@@ -444,7 +444,9 @@ if [ "$TARGET" != "" ]; then
 	else
 		PREFIX=/tmp/root
 	fi
-	if [ -d "${PREFIX}/usr/share/uboot/${TARGET}" ]; then
+	if [ "$TARGET" = "rpi2" ] || [ "$TARGET" = "rpi3" ]; then
+		. "${BOARDDIR}/${TARGET}"
+	elif [ -d "${PREFIX}/usr/share/uboot/${TARGET}" ]; then
 		. "${BOARDDIR}/${TARGET}"
 	else
 		echo "= No U-Boot files found for $TARGET."
