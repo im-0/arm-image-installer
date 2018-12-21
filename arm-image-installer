@@ -276,48 +276,37 @@ get_lvm_name () {
 	fi
 }
 
-
-		
-
-sleep 1
-case $MEDIA in
-	"/dev/mmcblk"*)
-		if [ -e "$MEDIA"p5 ]; then
-			export FIRMPART="${MEDIA}p1"
-			BOOTPART="${MEDIA}p2"
-			ROOTPART="${MEDIA}p5"
-			PARTNUM=5
-		elif [ -e "$MEDIA"p4 ]; then
-			export FIRMPART="${MEDIA}p1"
-			BOOTPART="${MEDIA}p2"
-			ROOTPART="${MEDIA}p4"
-			PARTNUM=4
-		else
-			export FIRMPART="${MEDIA}p1"
-                        BOOTPART="${MEDIA}p2"
-                        ROOTPART="${MEDIA}p3"
-                        PARTNUM=3
-		fi
-		;;
-	*)
-		if [ -e "$MEDIA"5 ]; then
-			export FIRMPART="${MEDIA}1"
-			BOOTPART="${MEDIA}2"
-			ROOTPART="${MEDIA}5"
-			PARTNUM=5
-		elif [ -e "$MEDIA"4 ]; then
-			export FIRMPART="${MEDIA}1"
-			BOOTPART="${MEDIA}2"
-			ROOTPART="${MEDIA}4"
-			PARTNUM=4
-		else
-			export FIRMPART="${MEDIA}1"
-                        BOOTPART="${MEDIA}2"
-                        ROOTPART="${MEDIA}3"
-                        PARTNUM=3
-		fi
-		;;
-esac
+if [ -e "$MEDIA"p5 ]; then
+	export FIRMPART="${MEDIA}p1"
+	BOOTPART="${MEDIA}p2"
+	ROOTPART="${MEDIA}p5"
+	PARTNUM=5
+elif [ -e "$MEDIA"p4 ]; then
+	export FIRMPART="${MEDIA}p1"
+	BOOTPART="${MEDIA}p2"
+	ROOTPART="${MEDIA}p4"
+	PARTNUM=4
+elif [ -e "$MEDIA"p3 ]; then
+	export FIRMPART="${MEDIA}p1"
+	BOOTPART="${MEDIA}p2"
+	ROOTPART="${MEDIA}p3"
+	PARTNUM=3
+elif [ -e "$MEDIA"5 ]; then
+	export FIRMPART="${MEDIA}1"
+	BOOTPART="${MEDIA}2"
+	ROOTPART="${MEDIA}5"
+	PARTNUM=5
+elif [ -e "$MEDIA"4 ]; then
+	export FIRMPART="${MEDIA}1"
+	BOOTPART="${MEDIA}2"
+	ROOTPART="${MEDIA}4"
+	PARTNUM=4
+else
+	export FIRMPART="${MEDIA}1"
+	BOOTPART="${MEDIA}2"
+	ROOTPART="${MEDIA}3"
+	PARTNUM=3
+fi
 
 # resize root filesystem before mounting
 if [ "$RESIZEFS" != "" ]; then
