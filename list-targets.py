@@ -10,6 +10,7 @@ def printboards(boards):
 os.chdir("boards.d")
 
 allwinner = ""
+allwinner64 = ""
 mx6 = ""
 omap = ""
 mvebu = ""
@@ -21,6 +22,8 @@ for entry in sorted(os.listdir('.')):
     if os.path.islink(entry):
         if 'AllWinner' == os.path.basename(os.path.realpath(entry)):
             allwinner += "%s " % entry
+        elif 'AllWinner-A64' == os.path.basename(os.path.realpath(entry)):
+            allwinner64 += "%s " % entry
         elif 'omap' == os.path.basename(os.path.realpath(entry)):
             omap += "%s " % entry
         elif 'imx6' == os.path.basename(os.path.realpath(entry)):
@@ -34,8 +37,12 @@ for entry in sorted(os.listdir('.')):
                 other += "%s " % entry
 
 
+
 print("AllWinner Devices:")
 printboards(allwinner)
+
+print("AllWinner-A64 Devices:")
+printboards(allwinner64)
 
 print("MX6 Devices:")
 printboards(mx6)
