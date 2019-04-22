@@ -263,7 +263,7 @@ if [ "$IMAGE" != "" ]; then
 	echo "= Writing: "
 	echo "= $IMAGE "
 	echo "= To: $MEDIA ...."
-	xzcat $IMAGE | dd of=$MEDIA bs=4M; sync; sleep 3
+	xzcat $IMAGE | dd of=$MEDIA bs=4M status=progress; sync; sleep 3
 	echo "= Writing image complete!"
 		partprobe "$MEDIA"
 fi
