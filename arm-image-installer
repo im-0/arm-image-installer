@@ -519,7 +519,7 @@ fi
 
 sync 
 
-umount $ROOTPART $BOOTPART $FIRMPART &> /dev/null
+umount /tmp/root $BOOTPART $FIRMPART &> /dev/null
 if [ "$LVM_NAME" != "" ]; then
 	vgchange -a n $LVM_NAME &> /dev/null
 fi
