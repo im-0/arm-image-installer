@@ -433,7 +433,7 @@ if [ "$TARGET" != "" ]; then
 	else
 		PREFIX=/tmp/root
 	fi
-	if [ "$TARGET" = "rpi2" ] || [ "$TARGET" = "rpi3" ]; then
+	if [ "$TARGET" = "rpi2" ] || [ "$TARGET" = "rpi3" ] || [ "$TARGET" = "olpc_xo175" ]; then
 		. "${BOARDDIR}/${TARGET}"
 	elif [ -d "${PREFIX}/usr/share/uboot/${TARGET}" ]; then
 		. "${BOARDDIR}/${TARGET}"
