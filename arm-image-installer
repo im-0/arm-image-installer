@@ -505,6 +505,12 @@ if [ "$FIX_RPI" != "" ]; then
 	sed -i 's/append/& rd.driver.blacklist=vc4/' /tmp/boot/extlinux/extlinux.conf
 fi
 
+# check if host system has selinux disabled, if it does autorelabel is required
+if [ "$(getenforce)" = "Disabled" ]; then
+                echo "= NOTE: System Relabel required on first boot."
+                RELABEL="1"
+fi
+
 # touch /.autorelabel
 if [ "$RELABEL" != "" ]; then
 	echo "= Touch /.autorelabel on rootfs."
