@@ -51,7 +51,7 @@ cat > /tmp/boot/boot/olpc.fth <<'EOF'
          4drop
          \ If we see a label, but already have boot-device set, then
          \ we drop the rest instead of proceeding to read another entry
-         boot-device and 0<>  if  drop 0  then
+         boot-device swap drop 0<>  if  drop 0  then
       else
          2dup " kernel" $=  if  2over unix-to-ofw-path to boot-device  else
          2dup " linux"  $=  if  2over unix-to-ofw-path to boot-device  else
