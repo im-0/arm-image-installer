@@ -17,6 +17,7 @@ Usage: $(basename ${0}) <options>
 	--image=IMAGE	- xz compressed image file name
 	--media=DEVICE	- media device file (/dev/[sdX|mmcblkX])
 	--norootpass	- Remove the root password
+	--sysrq		- Enable System Request debugging of the kernel
 	--resizefs	- Resize root filesystem to fill media device
 	--supported	- List of supported hardware
 	--target=TARGET	- target board
@@ -102,6 +103,9 @@ while [ $# -gt 0 ]; do
                         ;;
 		--norootpass)
 			NOROOTPASS=1
+			;;
+		--sysrq)
+			SYSRQ=1
 			;;
 		--resizefs)
 			RESIZEFS=1
@@ -221,6 +225,10 @@ fi
 # Remove root password
 if [ "$NOROOTPASS" != "" ]; then
 	echo "= Root Password will be removed."
+fi
+# Enable System Request debugging of the kernel
+if [ "$SYSRQ" != "" ]; then
+	echo "= System Request debugging of the kernel will be enabled."
 fi
 # Resize root filesystem to fill media device
 if [ "$RESIZEFS" != "" ]; then
@@ -460,6 +468,14 @@ fi
 if [ "$NOROOTPASS" = "1" ]; then
 	echo "= Removing the root password."
 	sed -i 's/root:x:/root::/' /tmp/root/etc/passwd
+fi
+# Enable System Request debugging of the kernel
+if [ "$SYSRQ" != "" ]; then
+	echo "= Enabling System Request debugging of the kernel."
+	cat >> /tmp/root/etc/sysctl.d/arm-image-installer-sysrq.conf <<-EOH
+		# Controls the System Request debugging functionality of the kernel
+		kernel.sysrq = 1
+	EOH
 fi
 # Add ssh key to the image
 if [ "$SSH_KEY" != "" ]; then
