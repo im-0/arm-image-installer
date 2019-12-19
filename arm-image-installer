@@ -209,7 +209,6 @@ echo "====================================================="
 # check to see if host system uses LVM and VG named fedora for root
 # if writing the aarch64 server image rename to fedora-server
 if [ -b /dev/fedora/root ] && [ "$(echo $IMAGE|awk '/aarch64/ && /Server/')" != "" ]; then
-#if [ "$(echo $IMAGE|awk '/aarch64/ && /Server/')" != "" ]; then
 	echo "**************************************************"
 	echo "= NOTE: This host system uses the same VG name as "
         echo "= the AArch64 disk image. To avoid issues, the VG "
@@ -421,7 +420,7 @@ if [ "$RESIZEFS" = "" ]; then
 fi
 
 if [ "$LVM_NAME" != "" ]; then
-	mount "/dev/$LVM_NAME/root" /tmp/root
+	mount "/dev/$LVM_NAME/root" /tmp/root &> /dev/null
 else
 	mount "$ROOTPART" /tmp/root
 	if [ $? -ne 0 ]; then
@@ -441,6 +440,7 @@ if [ "$RENAME_LVM" != "" ]; then
 	mkdir /tmp/fw
 	mount "$FIRMPART" /tmp/fw
 	sed -i 's|/dev/mapper/fedora-root|/dev/mapper/fedora--server-root|g; s|rd.lvm.lv=fedora/root|rd.lvm.lv=fedora-server/root|g' /tmp/fw/EFI/fedora/grub.cfg
+	sed -i 's|/dev/mapper/fedora-root|/dev/mapper/fedora--server-root|g; s|rd.lvm.lv=fedora/root|rd.lvm.lv=fedora-server/root|g' /tmp/fw/EFI/fedora/grubenv
 fi
 
 
