@@ -397,11 +397,10 @@ if [ "$RESIZEFS" != "" ]; then
 		FS_TYPE=$(blkid "$ROOTPART" | cut -d'"' -f 6)
 	fi
 
-	if [ "$FS_TYPE" = "xfs" ] || [ "$FS_TYPE" = "LVM2_member" ]; then
+	if [ "$FS_TYPE" = "xfs" ] && [ "$LVM_NAME" != "" ]; then
 		mkdir /tmp/root &> /dev/null
 		mount "$ROOTPART" /tmp/root &> /dev/null
 		xfs_growfs /tmp/root
-		umount "$ROOTPART"
 	elif [ "$FS_TYPE" = "ext4" ]; then 
 		fsck.ext4 -fy "$ROOTPART"
 		resize2fs "$ROOTPART"
