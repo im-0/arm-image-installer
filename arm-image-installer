@@ -407,8 +407,10 @@ if [ "$RESIZEFS" != "" ]; then
 fi
 
 # make temp mount points
-mkdir /tmp/{boot,root} &> /dev/null
+mkdir /tmp/{boot,root,fw} &> /dev/null
 mount "$BOOTPART" /tmp/boot &> /dev/null
+mount "$FIRMPART" /tmp/fw
+
 if [ $? -ne 0 ]; then
 	echo "Error: mount $BOOTPART /tmp/boot failed"
 	exit 1
@@ -437,8 +439,6 @@ fi
 
 # fix up grub.cfg to reflect the new vg name
 if [ "$RENAME_LVM" != "" ]; then
-	mkdir /tmp/fw
-	mount "$FIRMPART" /tmp/fw
 	sed -i 's|/dev/mapper/fedora-root|/dev/mapper/fedora--server-root|g; s|rd.lvm.lv=fedora/root|rd.lvm.lv=fedora-server/root|g' /tmp/fw/EFI/fedora/grub.cfg
 	sed -i 's|/dev/mapper/fedora-root|/dev/mapper/fedora--server-root|g; s|rd.lvm.lv=fedora/root|rd.lvm.lv=fedora-server/root|g' /tmp/fw/EFI/fedora/grubenv
 fi
@@ -468,22 +468,22 @@ fi
 if [ "$SELINUX" != "" ]; then
 	if [ "$(echo ${SELINUX} | tr [:lower:] [:upper:])" = "OFF" ]; then
 		echo "= Turning SELinux off ..."
-		sed -i 's/SELINUX=enforcing/SELINUX=permissive/' /tmp/root/etc/selinux/config
+		sed -i 's/SELINUX=enforcing/SELINUX=permissive/' ${PREFIX}/etc/selinux/config
 		# turn on selinux
 	elif [ "$(echo ${SELINUX} | tr [:lower:] [:upper:])" = "ON" ]; then
 		echo "= Turning SELinux on ..."
-		sed -i 's/SELINUX=permissive/SELINUX=enforcing/' /tmp/root/etc/selinux/config
+		sed -i 's/SELINUX=permissive/SELINUX=enforcing/' ${PREFIX}/etc/selinux/config
 	fi
 fi
 # Remove root password
 if [ "$NOROOTPASS" = "1" ]; then
 	echo "= Removing the root password."
-	sed -i 's/root:x:/root::/' /tmp/root/etc/passwd
+	sed -i 's/root:x:/root::/' ${PREFIX}/etc/passwd
 fi
 # Enable System Request debugging of the kernel
 if [ "$SYSRQ" != "" ]; then
 	echo "= Enabling System Request debugging of the kernel."
-	cat >> /tmp/root/etc/sysctl.d/arm-image-installer-sysrq.conf <<-EOH
+	cat >> ${PREFIX}/etc/sysctl.d/arm-image-installer-sysrq.conf <<-EOH
 		# Controls the System Request debugging functionality of the kernel
 		kernel.sysrq = 1
 	EOH
@@ -519,8 +519,6 @@ if [ "$CONSOLE" = "1" ]; then
 	       	sed -i "s|append|& console=$SYSCON console=tty0 |" /tmp/boot/extlinux/extlinux.conf
 	fi
 	if [ "$TARGET" = "rpi2" ] || [ "$TARGET" = "rpi3" ]; then
-		mkdir /tmp/fw &> /dev/null
-		mount "$FIRMPART" /tmp/fw &> /dev/null
 		sed -i "s|# enable_uart=1|enable_uart=1|" /tmp/fw/config.txt
 	fi
 fi
@@ -540,14 +538,22 @@ fi
 
 # touch /.autorelabel
 if [ "$RELABEL" != "" ]; then
-	echo "= Touch /.autorelabel on rootfs."
-	touch /tmp/root/.autorelabel
+	if [ "$IOT_IMAGE" = "1" ]; then
+		echo "= SELinux relabel not supported on IoT images."
+	else
+		echo "= Touch /.autorelabel on rootfs."
+		touch ${PREFIX}/.autorelabel
+	fi
 fi
 # add option kernel parameters
 if [ "$OPT_ARGS" != "" ] ; then
 	echo "= Adding optional kernel parameters for $TARGET : "
-	echo "= $OPT_ARGS"
-	sed -i "s|append|& $OPT_ARGS|" /tmp/boot/extlinux/extlinux.conf
+	echo "= Parameter: $OPT_ARGS"
+	if [ -f /tmp/boot/extlinux/extlinux.conf ]; then
+		sed -i "s|append|& $OPT_ARGS|" /tmp/boot/extlinux/extlinux.conf
+	elif [ -f /tmp/fw/EFI/fedora/grub.cfg ]; then
+		sed -i "s|set default_kernelopts=\"|& $OPT_ARGS |" /tmp/fw/EFI/fedora/grub.cfg
+	fi
 fi
 
 sync 
