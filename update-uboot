@@ -118,7 +118,6 @@ if [[ $KOJI_TAG != '' ]]; then
 fi
 # determine uboot and write to disk
 if [ "$TARGET" != "" ]; then
-        PREFIX=/tmp/root
         if [ "$TARGET" = "rpi2" ] || [ "$TARGET" = "rpi3" ] || [ "$TARGET" = "olpc_xo175" ]; then
                 . "${BOARDDIR}/${TARGET}"
         elif [ -d "${PREFIX}/usr/share/uboot/${TARGET}" ]; then
