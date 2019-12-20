@@ -12,8 +12,8 @@ usage() {
     echo "
 Usage: $(basename ${0}) <options>
 
-	--addconsole    - Add system console to extlinux.conf
-	--addkey=       - /path/to/ssh-public-key
+	--addconsole    - Add system console kernel parameter for the target
+	--addkey        - /path/to/ssh-public-key
 	--image=IMAGE	- xz compressed image file name
 	--media=DEVICE	- media device file (/dev/[sdX|mmcblkX])
 	--norootpass	- Remove the root password
