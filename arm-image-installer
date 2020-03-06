@@ -411,10 +411,13 @@ fi
 # make temp mount points
 mkdir /tmp/{boot,root,fw} &> /dev/null
 mount "$BOOTPART" /tmp/boot &> /dev/null
-mount "$FIRMPART" /tmp/fw
-
 if [ $? -ne 0 ]; then
 	echo "Error: mount $BOOTPART /tmp/boot failed"
+	exit 1
+fi
+mount "$FIRMPART" /tmp/fw
+if [ $? -ne 0 ]; then
+	echo "Error: mount $FIRMPART /tmp/fw failed"
 	exit 1
 fi
 
