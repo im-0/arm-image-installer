@@ -19,16 +19,22 @@ needed to write U-Boot for the target board.
 
 Usage: arm-image-installer <options>
 
-	--addconsole    - Add system console to extlinux.conf
-	--addkey=       - /path/to/ssh-public-key
-	--image=IMAGE	- xz compressed image file name
-	--media=DEVICE	- media device file (/dev/[sdX|mmcblkX])
+	--image=IMAGE   - xz compressed image file name
+	--media=DEVICE  - media device file (/dev/[sdX|mmcblkX])
+Optional
+	--addconsole    - Add system console kernel parameter for the target
+	--addkey        - /path/to/ssh-public-key
+	--args          - Optional kernel parameters listed in quotes
 	--norootpass	- Remove the root password
-	--resizefs	- Resize root filesystem to fill media device
-	--supported	- List of supported hardware
-	--target=TARGET	- target board
-	--version	- Display version and exit
+	--relabel       - SELinux relabel root filesystem on first boot
+	--resizefs      - Resize root filesystem to fill media device
+	--sysrq		- Enable System Request debugging of the kernel
+	--target=TARGET	- target board for uboot
 	-y		- Assumes yes, will not wait for confirmation
+Help
+	--supported     - List of supported hardware
+	--version       - Display version and exit
+
 
 Example: arm-image-installer --image=Fedora-Rawhide.xz --target=panda --media=/dev/mmcblk0 --selinux=OFF
 
