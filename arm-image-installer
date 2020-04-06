@@ -450,15 +450,15 @@ if [ "$RENAME_LVM" != "" ]; then
 	sed -i 's|/dev/mapper/fedora-root|/dev/mapper/fedora--server-root|g; s|rd.lvm.lv=fedora/root|rd.lvm.lv=fedora-server/root|g' /tmp/fw/EFI/fedora/grubenv
 fi
 
+if [ "$IOT_IMAGE" = "1" ]; then
+	# dd doesnt support wildcards, echo to expand
+	PREFIX=$(echo $OSTREE_PREFIX)
+else
+	PREFIX=/tmp/root
+fi
 
 # determine uboot and write to disk
 if [ "$TARGET" != "" ]; then
-	if [ "$IOT_IMAGE" = "1" ]; then
-		# dd doesnt support wildcards, echo to expand
-        	PREFIX=$(echo $OSTREE_PREFIX)
-	else
-		PREFIX=/tmp/root
-	fi
 	if [ "$TARGET" = "rpi2" ] || [ "$TARGET" = "rpi3" ] || [ "$TARGET" = "olpc_xo175" ]; then
 		. "${BOARDDIR}/${TARGET}"
 	elif [ -d "${PREFIX}/usr/share/uboot/${TARGET}" ]; then
