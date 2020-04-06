@@ -408,6 +408,8 @@ if [ "$RESIZEFS" != "" ]; then
 	fi
 fi
 
+sleep 5
+
 # make temp mount points
 mkdir /tmp/{boot,root,fw} &> /dev/null
 mount "$BOOTPART" /tmp/boot &> /dev/null
