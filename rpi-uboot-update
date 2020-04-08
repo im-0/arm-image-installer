@@ -54,7 +54,10 @@ if [ "$UBOOT" = "package ${UBOOTPKG} is not installed" ]; then
 fi
 echo
 echo "= Version - $UBOOT"
-	
+
+if [ -f /usr/share/uboot/rpi_4/u-boot.bin ] && [ "$ARCH" = "aarch64" ]; then
+		cp -rp /usr/share/uboot/rpi_4/u-boot.bin /boot/efi/rpi4-u-boot.bin
+fi
 if [ -f /usr/share/uboot/rpi_3/u-boot.bin ] && [ "$ARCH" = "aarch64" ]; then
 		cp -rp /usr/share/uboot/rpi_3/u-boot.bin /boot/efi/rpi3-u-boot.bin
 fi
