@@ -3,7 +3,7 @@
 # Copyright (C) 2014-2015 Red Hat Inc.
 # SPDX-License-Identifier:  GPL-2.0+
 
-# Automate Media Creation for Fedora ARM 
+# Automate Media Creation for Fedora ARM
 # Current version
 VERSION=2.16
 
@@ -11,19 +11,19 @@ VERSION=2.16
 usage() {
     echo "
 Usage: $(basename ${0}) <options>
-	
+
 	--image=IMAGE   - xz compressed image file name
 	--media=DEVICE  - media device file (/dev/[sdX|mmcblkX])
 Optional
 	--addconsole    - Add system console kernel parameter for the target
 	--addkey        - /path/to/ssh-public-key
 	--args          - Optional kernel parameters listed in quotes
-	--norootpass	- Remove the root password
+	--norootpass    - Remove the root password
 	--relabel       - SELinux relabel root filesystem on first boot
 	--resizefs      - Resize root filesystem to fill media device
-	--sysrq		- Enable System Request debugging of the kernel
-	--target=TARGET	- target board for uboot
-	-y		- Assumes yes, will not wait for confirmation
+	--sysrq         - Enable System Request debugging of the kernel
+	--target=TARGET - target board for uboot
+	-y              - Assumes yes, will not wait for confirmation
 Help
 	--supported     - List of supported hardware
 	--version       - Display version and exit
@@ -96,13 +96,13 @@ while [ $# -gt 0 ]; do
 			fi
 			;;
 		--args*)
-                        if echo $1 | grep '=' >/dev/null ; then
-                                OPT_ARGS=$(echo $1 | sed 's/^--args=//')
-                        else
-                                OPT_ARGS=$2
-                                shift
-                        fi
-                        ;;
+			if echo $1 | grep '=' >/dev/null ; then
+				OPT_ARGS=$(echo $1 | sed 's/^--args=//')
+			else
+				OPT_ARGS=$2
+				shift
+			fi
+			;;
 		--norootpass)
 			NOROOTPASS=1
 			;;
@@ -116,7 +116,7 @@ while [ $# -gt 0 ]; do
 			CONSOLE=1
 			;;
 		--blacklistvc4)
-			FIX_RPI=1	
+			FIX_RPI=1
 			;;
 		--supported)
 			cat $DOC_DIR/SUPPORTED-BOARDS
@@ -166,17 +166,17 @@ fi
 if [ "$MEDIA" = "/dev/sda" ]; then
 	echo ""
 	echo " ***********************************************************"
-        echo " ** WARNING: You have requested the image be written to sda."
+	echo " ** WARNING: You have requested the image be written to sda."
 	echo " ** /dev/sda is usually the root filesystem of the host. "
 	echo " ***********************************************************"
 	echo " ** Do you wish to continue? (type 'yes' to continue)"
 	echo " ***********************************************************"
-         # wait for agreement
-        read -p " = Continue? " AGREE
-        if [ "$(echo ${AGREE} | tr [:lower:] [:upper:])" != "YES" ]; then
-                echo "User exit, no image written."
-                exit 0
-        fi
+	# wait for agreement
+	read -p " = Continue? " AGREE
+	if [ "$(echo ${AGREE} | tr [:lower:] [:upper:])" != "YES" ]; then
+		echo "User exit, no image written."
+		exit 0
+	fi
 fi
 
 # change cubietruck target to uppercase
@@ -186,7 +186,7 @@ fi
 
 # check for boards
 if [ "$TARGET" != "" -a ! -e "${BOARDDIR}/${TARGET}" ]; then
-	echo "Error: You must choose a supported board or none at all." 
+	echo "Error: You must choose a supported board or none at all."
 	usage
 	exit 1
 fi
@@ -213,8 +213,8 @@ echo "====================================================="
 if [ -b /dev/fedora/root ] && [ "$(echo $IMAGE|awk '/aarch64/ && /Server/')" != "" ]; then
 	echo "**************************************************"
 	echo "= NOTE: This host system uses the same VG name as "
-        echo "= the AArch64 disk image. To avoid issues, the VG "
-        echo "= on the image will be renamed to 'fedora-server'."
+	echo "= the AArch64 disk image. To avoid issues, the VG "
+	echo "= on the image will be renamed to 'fedora-server'."
 	echo "**************************************************"
 	RENAME_LVM="1"
 fi
@@ -226,7 +226,7 @@ if [ "$IMAGE" != "" ]; then
 fi
 echo "= Selected Media : $MEDIA"
 # target hardware platform
-if [ "$TARGET" != "" ]; then 
+if [ "$TARGET" != "" ]; then
 	echo "= U-Boot Target : $TARGET"
 fi
 # SE Linux On/Off
@@ -263,7 +263,7 @@ echo "*****************************************************"
 echo "******** WARNING! ALL DATA WILL BE DESTROYED ********"
 echo "*****************************************************"
 echo "*****************************************************"
-if [ "$NOASK" != 1 ]; then 
+if [ "$NOASK" != 1 ]; then
 	echo " "
 	echo " Type 'YES' to proceed, anything else to exit now "
 	echo " "
@@ -348,15 +348,15 @@ if [ "$RESIZEFS" != "" ]; then
 		partprobe "$MEDIA"
 		if [ "$PARTNUM" = "5" ]; then
 			echo ", +" | sfdisk -N "$PARTNUM" "$MEDIA"
-                	while [ $? != '0' ]; do
-                        	sleep 5
-                        	echo ", +" | sfdisk -N "$PARTNUM" "$MEDIA"
-                        	((count++))
-                        	if [ $count -gt 5 ]; then
-                               		echo "= Partition Resize Failed."
-                                	continue
-                        	fi
-                	done
+			while [ $? != '0' ]; do
+				sleep 5
+				echo ", +" | sfdisk -N "$PARTNUM" "$MEDIA"
+				((count++))
+				if [ $count -gt 5 ]; then
+					echo "= Partition Resize Failed."
+					continue
+				fi
+			done
 		fi
 		partprobe "$MEDIA"
 	fi
@@ -368,20 +368,20 @@ if [ "$RESIZEFS" != "" ]; then
 			vgrename $LVM_UUID fedora-server
 			LVM_NAME=fedora-server
 		fi
-		
+
 		get_lvm_name
 		vgchange -a n $LVM_NAME &> /dev/null
 
 		echo ", +" | sfdisk -N "$PARTNUM" "$MEDIA"
 		while [ $? != '0' ]; do
-                        sleep 5
-                        echo ", +" | sfdisk -N "$PARTNUM" "$MEDIA"
-                        ((count++))
-                        if [ $count -gt 5 ]; then
-                                echo "= Partition Resize Failed."
-                                continue
-                        fi
-                done
+			sleep 5
+			echo ", +" | sfdisk -N "$PARTNUM" "$MEDIA"
+			((count++))
+			if [ $count -gt 5 ]; then
+				echo "= Partition Resize Failed."
+				continue
+			fi
+		done
 		sleep 5
 		partprobe "$MEDIA"
 		if [ "$LVM_NAME" != "" ]; then
@@ -391,7 +391,7 @@ if [ "$RESIZEFS" != "" ]; then
 			ROOTPART="/dev/$LVM_NAME/root"
 		fi
 	fi
-	
+
 	if [ "$(echo $IMAGE | grep -i 'armhfp')" = "" ]; then
 		FS_TYPE=$(blkid "$ROOTPART" | cut -d'"' -f 4)
 	else
@@ -402,7 +402,7 @@ if [ "$RESIZEFS" != "" ]; then
 		mkdir /tmp/root &> /dev/null
 		mount "$ROOTPART" /tmp/root &> /dev/null
 		xfs_growfs /tmp/root
-	elif [ "$FS_TYPE" = "ext4" ]; then 
+	elif [ "$FS_TYPE" = "ext4" ]; then
 		fsck.ext4 -fy "$ROOTPART"
 		resize2fs "$ROOTPART"
 	fi
@@ -512,18 +512,17 @@ if [ "$SSH_KEY" != "" ]; then
 		echo "= SSH key $SSH_KEY : Not Found!"
 		echo "= WARNING: No SSH Key Added."
 	fi
-	
 fi
-	
+
 # Add console
 if [ "$CONSOLE" = "1" ]; then
-	if [ "$SYSCON" = "" ]; then 
-                SYSCON="ttyS0,115200" 
-                echo "= No console listed for $TARGET, adding default $SYSCON ." 
-        fi 
-       	if [ -f /tmp/boot/extlinux/extlinux.conf ]; then
+	if [ "$SYSCON" = "" ]; then
+		SYSCON="ttyS0,115200"
+		echo "= No console listed for $TARGET, adding default $SYSCON ."
+	fi
+	if [ -f /tmp/boot/extlinux/extlinux.conf ]; then
 		echo "= Adding console $SYSCON to extlinux.conf ..."
-	       	sed -i "s|append|& console=$SYSCON console=tty0 |" /tmp/boot/extlinux/extlinux.conf
+		sed -i "s|append|& console=$SYSCON console=tty0 |" /tmp/boot/extlinux/extlinux.conf
 	fi
 	if [ "$TARGET" = "rpi2" ] || [ "$TARGET" = "rpi3" ]; then
 		sed -i "s|# enable_uart=1|enable_uart=1|" /tmp/fw/config.txt
@@ -539,8 +538,8 @@ fi
 
 # check if host system has selinux disabled, if it does autorelabel is required
 if [ "$(getenforce)" = "Disabled" ]; then
-                echo "= NOTE: System Relabel required on first boot."
-                RELABEL="1"
+	echo "= NOTE: System Relabel required on first boot."
+	RELABEL="1"
 fi
 
 # touch /.autorelabel
@@ -563,7 +562,7 @@ if [ "$OPT_ARGS" != "" ] ; then
 	fi
 fi
 
-sync 
+sync
 
 umount /tmp/root $BOOTPART $FIRMPART &> /dev/null
 if [ "$LVM_NAME" != "" ]; then
@@ -576,7 +575,7 @@ if [ "$URL" != "" ]; then
 	echo "= NOTE"
 	echo "= Additional instructions for $TARGET can be found at:"
 	echo "= $URL "
-	echo 
+	echo
 fi
 
 echo ""
