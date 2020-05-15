@@ -297,6 +297,15 @@ get_lvm_name () {
 	fi
 }
 
+add_kernel_parameter () {
+	if [ -f /tmp/boot/extlinux/extlinux.conf ]; then
+		sed -i "s|append|& $1 |" /tmp/boot/extlinux/extlinux.conf
+	elif [ -f /tmp/fw/EFI/fedora/grub.cfg ]; then
+		sed -i "s|GRUB_CMDLINE_LINUX=\"|& $1 |" ${PREFIX}/etc/default/grub
+		sed -i "s|kernelopts=|& $1 |" /tmp/fw/EFI/fedora/grubenv
+	fi
+}
+
 if [ -e "$MEDIA"p5 ]; then
 	export FIRMPART="${MEDIA}p1"
 	BOOTPART="${MEDIA}p2"
@@ -515,10 +524,10 @@ if [ "$CONSOLE" = "1" ]; then
 		SYSCON="ttyS0,115200"
 		echo "= No console listed for $TARGET, adding default $SYSCON ."
 	fi
-	if [ -f /tmp/boot/extlinux/extlinux.conf ]; then
-		echo "= Adding console $SYSCON to extlinux.conf ..."
-		sed -i "s|append|& console=$SYSCON console=tty0 |" /tmp/boot/extlinux/extlinux.conf
-	fi
+
+	echo "= Adding console $SYSCON to kernel parameters ..."
+	add_kernel_parameter "console=$SYSCON console=tty0"
+
 	if [ "$TARGET" = "rpi2" ] || [ "$TARGET" = "rpi3" ]; then
 		sed -i "s|# enable_uart=1|enable_uart=1|" /tmp/fw/config.txt
 	fi
@@ -528,7 +537,7 @@ fi
 if [ "$FIX_RPI" != "" ]; then
 	echo "= Blacklisting the VC4 Driver for the Raspberry Pi 2/3"
 	echo blacklist vc4 > /tmp/root/etc/modprobe.d/blacklist-vc4.conf
-	sed -i 's/append/& rd.driver.blacklist=vc4/' /tmp/boot/extlinux/extlinux.conf
+	add_kernel_parameter "rd.driver.blacklist=vc4"
 fi
 
 # check if host system has selinux disabled, if it does autorelabel is required
@@ -550,11 +559,7 @@ fi
 if [ "$OPT_ARGS" != "" ] ; then
 	echo "= Adding optional kernel parameters for $TARGET : "
 	echo "= Parameter: $OPT_ARGS"
-	if [ -f /tmp/boot/extlinux/extlinux.conf ]; then
-		sed -i "s|append|& $OPT_ARGS|" /tmp/boot/extlinux/extlinux.conf
-	elif [ -f /tmp/fw/EFI/fedora/grub.cfg ]; then
-		sed -i "s|set default_kernelopts=\"|& $OPT_ARGS |" /tmp/fw/EFI/fedora/grub.cfg
-	fi
+	add_kernel_parameter "$OPT_ARGS"
 fi
 
 sync
