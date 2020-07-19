@@ -406,6 +406,10 @@ if [ "$RESIZEFS" != "" ]; then
 		mkdir /tmp/root &> /dev/null
 		mount "$ROOTPART" /tmp/root &> /dev/null
 		xfs_growfs /tmp/root
+	elif [ "$FS_TYPE" = "btrfs" ]; then
+		mkdir /tmp/root &> /dev/null
+		mount -o subvol=root "$ROOTPART" /tmp/root &> /dev/null
+		btrfs filesystem resize max /tmp/root
 	elif [ "$FS_TYPE" = "ext4" ]; then
 		fsck.ext4 -fy "$ROOTPART"
 		resize2fs "$ROOTPART"
@@ -435,7 +439,12 @@ fi
 if [ "$LVM_NAME" != "" ]; then
 	mount "/dev/$LVM_NAME/root" /tmp/root &> /dev/null
 else
-	mount "$ROOTPART" /tmp/root
+	FS_TYPE=$(blkid "$ROOTPART" -s TYPE -o value)
+	if [ "$FS_TYPE" = "btrfs" ]; then
+		mount -o subvol=root "$ROOTPART" /tmp/root
+	else
+		mount "$ROOTPART" /tmp/root
+	fi
 	if [ $? -ne 0 ]; then
 		echo "Error: mount $ROOTPART /tmp/root failed"
 		exit 1
