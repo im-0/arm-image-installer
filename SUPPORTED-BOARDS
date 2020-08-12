@@ -23,6 +23,7 @@ cm_fx6 liteboard marsboard mx6cuboxi novena riotboard udoo udoo_neo usbarmory wa
 
 TI Devices:
 am335x_evm am57xx_evm kc1 omap3_beagle omap5_uevm omap4_panda
+Note - For am335x* devices use 'am335x_evm'
 
 MVEBU Devices:
 clearfog helios4 
