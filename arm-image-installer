@@ -468,7 +468,7 @@ fi
 
 # determine uboot and write to disk
 if [ "$TARGET" != "" ]; then
-	if [ "$TARGET" = "rpi2" ] || [ "$TARGET" = "rpi3" ] || [ "$TARGET" = "olpc_xo175" ]; then
+	if [ "$TARGET" = rpi[2,3,4] ] || [ "$TARGET" = "olpc_xo175" ]; then
 		. "${BOARDDIR}/${TARGET}"
 	elif [ -d "${PREFIX}/usr/share/uboot/${TARGET}" ]; then
 		. "${BOARDDIR}/${TARGET}"
@@ -533,7 +533,7 @@ if [ "$CONSOLE" = "1" ]; then
 	echo "= Adding console $SYSCON to kernel parameters ..."
 	add_kernel_parameter "console=$SYSCON console=tty0"
 
-	if [ "$TARGET" = "rpi2" ] || [ "$TARGET" = "rpi3" ]; then
+	if [ "$TARGET" = rpi[2,3,4] ]; then
 		sed -i "s|# enable_uart=1|enable_uart=1|" /tmp/fw/config.txt
 	fi
 fi
