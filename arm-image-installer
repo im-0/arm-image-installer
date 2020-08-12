@@ -203,7 +203,6 @@ if [ ! -e "$MEDIA" ]; then
 	exit 1
 fi
 
-clear
 # Last chance to back out
 echo ""
 echo "====================================================="
