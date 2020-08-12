@@ -408,8 +408,9 @@ if [ "$RESIZEFS" != "" ]; then
 		xfs_growfs /tmp/root
 	elif [ "$FS_TYPE" = "btrfs" ]; then
 		mkdir /tmp/root &> /dev/null
-		mount -o subvol=root "$ROOTPART" /tmp/root &> /dev/null
+		mount "$ROOTPART" /tmp/root &> /dev/null
 		btrfs filesystem resize max /tmp/root
+		BTRFS=1
 	elif [ "$FS_TYPE" = "ext4" ]; then
 		fsck.ext4 -fy "$ROOTPART"
 		resize2fs "$ROOTPART"
@@ -436,18 +437,11 @@ if [ "$RESIZEFS" = "" ]; then
 	vgchange -a y $LVM_NAME &> /dev/null
 fi
 
-if [ "$LVM_NAME" != "" ]; then
-	mount "/dev/$LVM_NAME/root" /tmp/root &> /dev/null
-else
-	FS_TYPE=$(blkid "$ROOTPART" -s TYPE -o value)
-	if [ "$FS_TYPE" = "btrfs" ]; then
-		mount -o subvol=root "$ROOTPART" /tmp/root
+if [ "$(grep /tmp/root /proc/mounts)" = "" ]; then
+	if [ "$LVM_NAME" != "" ]; then
+		mount "/dev/$LVM_NAME/root" /tmp/root &> /dev/null
 	else
-		mount "$ROOTPART" /tmp/root
-	fi
-	if [ $? -ne 0 ]; then
-		echo "Error: mount $ROOTPART /tmp/root failed"
-		exit 1
+        	mount "$ROOTPART" /tmp/root
 	fi
 fi
 
@@ -466,6 +460,8 @@ fi
 if [ "$IOT_IMAGE" = "1" ]; then
 	# dd doesnt support wildcards, echo to expand
 	PREFIX=$(echo $OSTREE_PREFIX)
+elif [ "$BTRFS" = "1" ]; then
+	PREFIX="/tmp/root/root/"
 else
 	PREFIX=/tmp/root
 fi
@@ -517,9 +513,9 @@ if [ "$SSH_KEY" != "" ]; then
 			cat $SSH_KEY >> $OSTREE_ROOT_HOME/.ssh/authorized_keys
 			chmod -R u=rwX,o=,g= $OSTREE_ROOT_HOME/.ssh/
 		else
-			mkdir /tmp/root/root/.ssh/ &> /dev/null
-			cat $SSH_KEY >> /tmp/root/root/.ssh/authorized_keys
-			chmod -R u=rwX,o=,g= /tmp/root/root/.ssh/
+			mkdir ${PREFIX}/root/.ssh/ &> /dev/null
+			cat $SSH_KEY >> ${PREFIX}/root/.ssh/authorized_keys
+			chmod -R u=rwX,o=,g= ${PREFIX}/root/.ssh/
 		fi
 	else
 		echo "= SSH key $SSH_KEY : Not Found!"
@@ -545,7 +541,7 @@ fi
 # fix up rpi2/3
 if [ "$FIX_RPI" != "" ]; then
 	echo "= Blacklisting the VC4 Driver for the Raspberry Pi 2/3"
-	echo blacklist vc4 > /tmp/root/etc/modprobe.d/blacklist-vc4.conf
+	echo blacklist vc4 > ${PREFIX}/etc/modprobe.d/blacklist-vc4.conf
 	add_kernel_parameter "rd.driver.blacklist=vc4"
 fi
 
